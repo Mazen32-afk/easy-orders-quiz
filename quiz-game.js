@@ -1,531 +1,715 @@
 (function () {
   // ================= SETTINGS =================
-  const COUPON_PARTS = ["SAVE", "10", "OFF"];
-  const QUESTION_COUNT = COUPON_PARTS.length;
-  const TIME_LIMIT = 30;
+  const CONFIG = {
+    overlayId: "LimitlessQuizOverlay",
+    finderId: "LimitlessQuizGame",
+    floatingBtnId: "LimitlessQuizFloatingBtn",
+    containerId: "quiz-container",
 
-  // اختياري: لو عندك لينك صفحة منتجات حطه هنا
-  // مثال: const SHOP_URL = "https://your-store.com/products";
-  const SHOP_URL = "";
+    couponParts: ["SAVE", "10", "OFF"],
+    timeLimit: 30,
+
+    // خليه true لو عايز زر عائم زي الكود اللي بعتّه
+    showFloatingButton: true,
+
+    // لو عايز البوب أب يفتح تلقائيًا بعد ثواني، حط رقم مثل 12000
+    autoOpenDelay: 0
+  };
+
+  const QUESTION_COUNT = CONFIG.couponParts.length;
 
   let QUESTIONS = window.QUIZ_QUESTIONS || [];
   let currentQuestions = [];
   let currentCoupon = [];
   let step = 0;
-  let timeLeft = TIME_LIMIT;
+  let timeLeft = CONFIG.timeLimit;
   let timer = null;
   let locked = false;
+  let previousBodyOverflow = "";
+
+  // ================= READY =================
+  function ready(fn) {
+    if (document.readyState !== "loading") {
+      fn();
+    } else {
+      document.addEventListener("DOMContentLoaded", fn);
+    }
+  }
 
   // ================= STYLE =================
   function injectStyle() {
-    if (document.getElementById("quiz-game-style")) return;
+    if (document.getElementById("LimitlessQuizStyle")) return;
 
     const style = document.createElement("style");
-    style.id = "quiz-game-style";
+    style.id = "LimitlessQuizStyle";
+
     style.innerHTML = `
-      #quiz-container {
-        --quiz-bg: #050505;
-        --quiz-card: #111111;
-        --quiz-card-2: #181818;
-        --quiz-border: rgba(255,255,255,0.12);
-        --quiz-border-strong: rgba(214,168,79,0.45);
-        --quiz-text: #ffffff;
-        --quiz-muted: #a3a3a3;
-        --quiz-gold: #d6a84f;
-        --quiz-gold-2: #f4d27a;
-        --quiz-gold-soft: rgba(214,168,79,0.15);
-        --quiz-green: #22c55e;
-        --quiz-green-soft: rgba(34,197,94,0.16);
-        --quiz-red: #ef4444;
-        --quiz-red-soft: rgba(239,68,68,0.16);
+      @import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700;800&display=swap");
 
-        direction: rtl;
-        text-align: right;
-        font-family: Arial, Tahoma, sans-serif;
-        color: var(--quiz-text);
-        background:
-          radial-gradient(circle at top right, rgba(214,168,79,0.18), transparent 34%),
-          radial-gradient(circle at bottom left, rgba(255,255,255,0.08), transparent 28%),
-          var(--quiz-bg);
-        padding: 22px;
-        margin: 22px 0;
-        border-radius: 24px;
-        border: 1px solid var(--quiz-border);
-        box-shadow:
-          0 22px 70px rgba(0,0,0,0.45),
-          inset 0 1px 0 rgba(255,255,255,0.05);
-        overflow: hidden;
-        position: relative;
-        isolation: isolate;
+      #${CONFIG.containerId},
+      #${CONFIG.overlayId},
+      #${CONFIG.floatingBtnId} {
+        font-family: "Readex Pro", Arial, sans-serif !important;
       }
 
-      #quiz-container::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background:
-          linear-gradient(135deg, rgba(255,255,255,0.07), transparent 30%),
-          linear-gradient(315deg, rgba(214,168,79,0.08), transparent 35%);
-        pointer-events: none;
-        z-index: -1;
+      #${CONFIG.containerId} * ,
+      #${CONFIG.overlayId} * ,
+      #${CONFIG.floatingBtnId} * {
+        box-sizing: border-box !important;
+        font-family: "Readex Pro", Arial, sans-serif !important;
       }
 
-      #quiz-container * {
-        box-sizing: border-box;
+      /* ================= INLINE LAUNCH CARD ================= */
+      #${CONFIG.containerId} {
+        direction: rtl !important;
+        text-align: center !important;
+        width: 100% !important;
+        margin: 22px 0 !important;
       }
 
-      #quiz-container .quiz-shell {
-        max-width: 760px;
-        margin: 0 auto;
+      .lq-launch-card {
+        width: 100% !important;
+        max-width: 1020px !important;
+        margin: 0 auto !important;
+        padding: 28px 14px !important;
+        color: #ffffff !important;
+        position: relative !important;
+        border-radius: 30px !important;
+        background: linear-gradient(135deg, #000000 0%, #101010 48%, #050505 100%) !important;
+        box-shadow: 0 28px 95px rgba(0, 0, 0, 0.45) !important;
+        overflow: hidden !important;
+        isolation: isolate !important;
       }
 
-      #quiz-container .quiz-card {
-        background: linear-gradient(180deg, rgba(24,24,24,0.98), rgba(12,12,12,0.98));
-        border: 1px solid var(--quiz-border);
-        border-radius: 22px;
-        padding: 22px;
-        box-shadow:
-          0 16px 42px rgba(0,0,0,0.35),
-          inset 0 1px 0 rgba(255,255,255,0.06);
-        animation: quizFadeUp 0.35s ease both;
+      .lq-launch-card::before {
+        content: "" !important;
+        position: absolute !important;
+        inset: 0 !important;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px) !important;
+        background-size: 38px 38px !important;
+        opacity: 0.24 !important;
+        pointer-events: none !important;
+        z-index: -1 !important;
       }
 
-      #quiz-container .quiz-top {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 14px;
-        margin-bottom: 18px;
+      .lq-launch-box {
+        max-width: 940px !important;
+        margin: 0 auto !important;
+        border: 1px solid rgba(37, 211, 102, 0.22) !important;
+        border-radius: 26px !important;
+        padding: 32px 20px 28px !important;
+        background: rgba(12, 12, 12, 0.78) !important;
+        box-shadow: 0 22px 70px rgba(0, 0, 0, 0.48) !important;
+        backdrop-filter: blur(10px) !important;
       }
 
-      #quiz-container .quiz-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        width: fit-content;
-        padding: 7px 12px;
-        border-radius: 999px;
-        background: var(--quiz-gold-soft);
-        border: 1px solid var(--quiz-border-strong);
-        color: var(--quiz-gold-2);
-        font-size: 12px;
-        font-weight: 900;
-        letter-spacing: 0.5px;
-        margin-bottom: 10px;
+      .lq-badge {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 32px !important;
+        padding: 7px 15px !important;
+        border-radius: 999px !important;
+        background: rgba(37, 211, 102, 0.12) !important;
+        border: 1px solid rgba(37, 211, 102, 0.38) !important;
+        color: #25D366 !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        margin-bottom: 13px !important;
       }
 
-      #quiz-container .quiz-title {
-        font-size: 26px;
-        font-weight: 950;
-        line-height: 1.35;
-        margin: 0 0 6px;
+      .lq-title {
+        margin: 0 0 8px !important;
+        color: #ffffff !important;
+        font-size: clamp(25px, 4vw, 44px) !important;
+        line-height: 1.25 !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.6px !important;
       }
 
-      #quiz-container .quiz-subtitle {
-        margin: 0;
-        color: var(--quiz-muted);
-        font-size: 15px;
-        line-height: 1.7;
+      .lq-title span {
+        display: inline-block !important;
+        padding: 2px 10px !important;
+        border-radius: 999px !important;
+        background: #25D366 !important;
+        color: #000000 !important;
       }
 
-      #quiz-container .timer-pill {
-        min-width: 84px;
-        height: 44px;
-        padding: 0 14px;
-        border-radius: 999px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        background: rgba(214,168,79,0.13);
-        border: 1px solid rgba(214,168,79,0.45);
-        color: var(--quiz-gold-2);
-        font-size: 18px;
-        font-weight: 950;
-        box-shadow: 0 0 22px rgba(214,168,79,0.12);
-        white-space: nowrap;
+      .lq-subtitle {
+        max-width: 690px !important;
+        margin: 0 auto 22px !important;
+        color: #d6d6d6 !important;
+        font-size: 14px !important;
+        line-height: 1.9 !important;
+        font-weight: 400 !important;
       }
 
-      #quiz-container .timer-pill.danger {
-        background: var(--quiz-red-soft);
-        border-color: rgba(239,68,68,0.55);
-        color: #fecaca;
-        animation: quizPulse 0.8s infinite;
+      .lq-launch-features {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+        max-width: 760px !important;
+        margin: 0 auto 24px !important;
       }
 
-      #quiz-container .progress-wrap {
-        margin: 18px 0;
+      .lq-feature {
+        min-height: 74px !important;
+        border-radius: 20px !important;
+        padding: 14px !important;
+        border: 1px solid rgba(255,255,255,0.12) !important;
+        background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(37,211,102,0.06)) !important;
+        color: #ffffff !important;
+        text-align: center !important;
       }
 
-      #quiz-container .progress-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 8px;
-        color: var(--quiz-muted);
-        font-size: 13px;
-        font-weight: 700;
+      .lq-feature strong {
+        display: block !important;
+        color: #25D366 !important;
+        font-size: 17px !important;
+        margin-bottom: 4px !important;
       }
 
-      #quiz-container .progress-track {
-        height: 10px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.08);
-        overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.08);
+      .lq-feature small {
+        color: #d6d6d6 !important;
+        font-size: 12px !important;
+        line-height: 1.6 !important;
       }
 
-      #quiz-container .progress-fill {
-        height: 100%;
-        width: 0%;
-        border-radius: 999px;
-        background: linear-gradient(90deg, var(--quiz-gold), var(--quiz-gold-2));
-        box-shadow: 0 0 24px rgba(214,168,79,0.45);
-        transition: width 0.35s ease;
+      .lq-main-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 50px !important;
+        padding: 0 30px !important;
+        border-radius: 999px !important;
+        border: 1px solid rgba(37, 211, 102, 0.82) !important;
+        background: #25D366 !important;
+        color: #000000 !important;
+        font-size: 14px !important;
+        font-weight: 800 !important;
+        cursor: pointer !important;
+        transition: 0.22s ease !important;
+        text-decoration: none !important;
       }
 
-      #quiz-container .question-box {
-        margin-top: 18px;
-        padding: 18px;
-        border-radius: 18px;
-        background:
-          linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
-        border: 1px solid rgba(255,255,255,0.1);
+      .lq-main-btn:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 18px 42px rgba(37, 211, 102, 0.18) !important;
       }
 
-      #quiz-container .question-label {
-        color: var(--quiz-gold-2);
-        font-size: 13px;
-        font-weight: 900;
-        margin-bottom: 8px;
+      /* ================= FLOATING BUTTON ================= */
+      #${CONFIG.floatingBtnId} {
+        position: fixed !important;
+        right: 12px !important;
+        top: 50% !important;
+        z-index: 2147483000 !important;
+        width: 76px !important;
+        min-width: 76px !important;
+        height: 78px !important;
+        padding: 8px 7px !important;
+        border-radius: 20px 0 0 20px !important;
+        border: 1px solid rgba(37, 211, 102, 0.62) !important;
+        border-right: 0 !important;
+        background: linear-gradient(135deg, #000000 0%, #111111 56%, #052B14 100%) !important;
+        color: #ffffff !important;
+        font-size: 10.5px !important;
+        font-weight: 800 !important;
+        cursor: pointer !important;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.38) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 2px !important;
+        direction: rtl !important;
+        line-height: 1.18 !important;
+        text-align: center !important;
+        transform: translateY(-50%) !important;
+        animation: lqButtonShake 4.5s ease-in-out infinite !important;
       }
 
-      #quiz-container .question {
-        font-size: 19px;
-        font-weight: 900;
-        line-height: 1.8;
-        margin: 0;
+      #${CONFIG.floatingBtnId}::before {
+        content: "" !important;
+        width: 7px !important;
+        height: 7px !important;
+        border-radius: 50% !important;
+        background: #25D366 !important;
+        display: block !important;
+        margin-bottom: 2px !important;
       }
 
-      #quiz-container .options-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 10px;
-        margin-top: 16px;
+      #${CONFIG.floatingBtnId}:hover {
+        animation-play-state: paused !important;
+        transform: translateY(calc(-50% - 2px)) !important;
+        border-color: rgba(37, 211, 102, 0.9) !important;
+        box-shadow: 0 16px 42px rgba(0, 0, 0, 0.48) !important;
       }
 
-      #quiz-container .option {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 13px 14px;
-        min-height: 54px;
-        border-radius: 15px;
-        background: rgba(255,255,255,0.045);
-        border: 1px solid rgba(255,255,255,0.11);
-        color: var(--quiz-text);
-        cursor: pointer;
-        transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
-        line-height: 1.6;
+      /* ================= OVERLAY ================= */
+      #${CONFIG.overlayId} {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 2147483001 !important;
+        background: rgba(0, 0, 0, 0.78) !important;
+        display: none !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 18px !important;
+        box-sizing: border-box !important;
+        direction: rtl !important;
       }
 
-      #quiz-container .option:hover {
-        transform: translateY(-2px);
-        border-color: rgba(214,168,79,0.65);
-        background: var(--quiz-gold-soft);
-        box-shadow: 0 10px 24px rgba(0,0,0,0.24);
+      #${CONFIG.overlayId}.active {
+        display: flex !important;
       }
 
-      #quiz-container .option.disabled {
-        pointer-events: none;
+      #${CONFIG.finderId} {
+        width: 100% !important;
+        max-width: 1080px !important;
+        max-height: 92vh !important;
+        overflow-y: auto !important;
+        box-sizing: border-box !important;
+        padding: 28px 14px !important;
+        color: #ffffff !important;
+        direction: rtl !important;
+        text-align: center !important;
+        position: relative !important;
+        border-radius: 30px !important;
+        box-shadow: 0 28px 95px rgba(0, 0, 0, 0.72) !important;
+        background: linear-gradient(135deg, #000000 0%, #101010 48%, #050505 100%) !important;
+        isolation: isolate !important;
       }
 
-      #quiz-container .option-letter {
-        width: 34px;
-        height: 34px;
-        min-width: 34px;
-        border-radius: 12px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        font-weight: 950;
-        color: var(--quiz-gold-2);
-        background: rgba(214,168,79,0.14);
-        border: 1px solid rgba(214,168,79,0.35);
+      #${CONFIG.finderId}::before {
+        content: "" !important;
+        position: absolute !important;
+        inset: 0 !important;
+        border-radius: 30px !important;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px) !important;
+        background-size: 38px 38px !important;
+        opacity: 0.24 !important;
+        pointer-events: none !important;
+        z-index: -1 !important;
       }
 
-      #quiz-container .option-text {
-        flex: 1;
-        font-size: 15px;
-        font-weight: 700;
+      .lq-close {
+        position: absolute !important;
+        top: 14px !important;
+        left: 14px !important;
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 50% !important;
+        border: 1px solid rgba(255,255,255,0.18) !important;
+        background: rgba(255,255,255,0.08) !important;
+        color: #fff !important;
+        font-size: 25px !important;
+        line-height: 1 !important;
+        cursor: pointer !important;
+        z-index: 5 !important;
       }
 
-      #quiz-container .option.correct {
-        background: var(--quiz-green-soft);
-        border-color: rgba(34,197,94,0.75);
-        box-shadow: 0 0 22px rgba(34,197,94,0.13);
+      .lq-close:hover {
+        background: rgba(255,255,255,0.16) !important;
       }
 
-      #quiz-container .option.correct .option-letter {
-        color: #bbf7d0;
-        background: rgba(34,197,94,0.22);
-        border-color: rgba(34,197,94,0.65);
+      .lq-box {
+        max-width: 1010px !important;
+        margin: 0 auto !important;
+        border: 1px solid rgba(37, 211, 102, 0.22) !important;
+        border-radius: 26px !important;
+        padding: 32px 20px 26px !important;
+        background: rgba(12, 12, 12, 0.78) !important;
+        box-shadow: 0 22px 70px rgba(0, 0, 0, 0.48) !important;
+        backdrop-filter: blur(10px) !important;
       }
 
-      #quiz-container .option.wrong {
-        background: var(--quiz-red-soft);
-        border-color: rgba(239,68,68,0.75);
-        animation: quizShake 0.28s ease both;
+      .lq-topline {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        flex-wrap: wrap !important;
+        margin-bottom: 13px !important;
       }
 
-      #quiz-container .option.wrong .option-letter {
-        color: #fecaca;
-        background: rgba(239,68,68,0.22);
-        border-color: rgba(239,68,68,0.65);
+      .lq-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 32px !important;
+        padding: 7px 15px !important;
+        border-radius: 999px !important;
+        background: rgba(37, 211, 102, 0.12) !important;
+        border: 1px solid rgba(37, 211, 102, 0.38) !important;
+        color: #25D366 !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
       }
 
-      #quiz-container .coupon-area {
-        margin-top: 18px;
-        padding: 16px;
-        border-radius: 18px;
-        background: rgba(0,0,0,0.28);
-        border: 1px dashed rgba(214,168,79,0.35);
+      .lq-timer {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 32px !important;
+        min-width: 82px !important;
+        padding: 7px 15px !important;
+        border-radius: 999px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        color: #ffffff !important;
+        font-size: 12px !important;
+        font-weight: 800 !important;
       }
 
-      #quiz-container .coupon-title {
-        color: var(--quiz-muted);
-        font-size: 13px;
-        font-weight: 800;
-        margin-bottom: 10px;
+      .lq-timer.danger {
+        color: #ffffff !important;
+        background: rgba(239, 68, 68, 0.18) !important;
+        border-color: rgba(239, 68, 68, 0.52) !important;
+        animation: lqPulse 0.8s infinite !important;
       }
 
-      #quiz-container .coupon-slots {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
+      .lq-heading {
+        font-size: clamp(23px, 3.4vw, 38px) !important;
+        font-weight: 800 !important;
+        margin: 0 0 10px !important;
+        line-height: 1.45 !important;
+        color: #ffffff !important;
       }
 
-      #quiz-container .coupon-slot {
-        flex: 1;
-        min-width: 90px;
-        min-height: 44px;
-        border-radius: 14px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 10px 12px;
-        background: rgba(255,255,255,0.045);
-        border: 1px solid rgba(255,255,255,0.1);
-        color: rgba(255,255,255,0.55);
-        font-weight: 950;
-        letter-spacing: 1px;
+      .lq-heading span {
+        display: inline-block !important;
+        padding: 1px 10px !important;
+        border-radius: 999px !important;
+        background: #25D366 !important;
+        color: #000000 !important;
       }
 
-      #quiz-container .coupon-slot.open {
-        color: #111;
-        background: linear-gradient(135deg, var(--quiz-gold), var(--quiz-gold-2));
-        border-color: rgba(214,168,79,0.8);
-        box-shadow: 0 0 26px rgba(214,168,79,0.22);
-        animation: quizPop 0.35s ease both;
+      .lq-desc {
+        max-width: 720px !important;
+        margin: 0 auto 20px !important;
+        color: #dddddd !important;
+        line-height: 1.85 !important;
+        font-size: 14px !important;
       }
 
-      #quiz-container .quiz-note {
-        margin-top: 12px;
-        color: var(--quiz-muted);
-        font-size: 12px;
-        line-height: 1.7;
+      .lq-progress {
+        width: 100% !important;
+        max-width: 590px !important;
+        height: 8px !important;
+        border-radius: 999px !important;
+        background: rgba(255,255,255,0.11) !important;
+        margin: 0 auto 18px !important;
+        overflow: hidden !important;
       }
 
-      #quiz-container .result-screen {
-        text-align: center;
-        padding: 10px 0;
-        animation: quizFadeUp 0.35s ease both;
+      .lq-progress-fill {
+        height: 100% !important;
+        width: 0% !important;
+        background: linear-gradient(90deg, #B7F5C8, #25D366) !important;
+        border-radius: 999px !important;
+        transition: 0.35s ease !important;
       }
 
-      #quiz-container .result-icon {
-        width: 74px;
-        height: 74px;
-        margin: 0 auto 14px;
-        border-radius: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 34px;
-        background: var(--quiz-gold-soft);
-        border: 1px solid var(--quiz-border-strong);
-        box-shadow: 0 0 36px rgba(214,168,79,0.18);
+      .lq-question-wrap {
+        animation: lqFade 0.28s ease !important;
       }
 
-      #quiz-container .result-icon.error-icon {
-        background: var(--quiz-red-soft);
-        border-color: rgba(239,68,68,0.45);
-        box-shadow: 0 0 36px rgba(239,68,68,0.13);
+      .lq-step {
+        display: inline-block !important;
+        color: #25D366 !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        margin-bottom: 12px !important;
       }
 
-      #quiz-container .result-title {
-        margin: 0 0 8px;
-        font-size: 28px;
-        font-weight: 950;
+      .lq-question {
+        font-size: clamp(20px, 2.5vw, 30px) !important;
+        margin: 0 0 18px !important;
+        color: #ffffff !important;
+        line-height: 1.6 !important;
+        font-weight: 800 !important;
       }
 
-      #quiz-container .result-text {
-        margin: 0 auto 18px;
-        max-width: 520px;
-        color: var(--quiz-muted);
-        line-height: 1.8;
-        font-size: 15px;
+      .lq-options {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+        max-width: 840px !important;
+        margin: 0 auto !important;
       }
 
-      #quiz-container .final-coupon {
-        width: fit-content;
-        max-width: 100%;
-        margin: 0 auto 16px;
-        padding: 14px 22px;
-        border-radius: 18px;
-        color: #111;
-        background: linear-gradient(135deg, var(--quiz-gold), var(--quiz-gold-2));
-        border: 1px solid rgba(255,255,255,0.2);
-        font-size: 28px;
-        font-weight: 950;
-        letter-spacing: 2px;
-        box-shadow: 0 14px 36px rgba(214,168,79,0.18);
-        word-break: break-word;
+      .lq-option {
+        min-height: 108px !important;
+        border: 1px solid rgba(255,255,255,0.13) !important;
+        background: linear-gradient(135deg, rgba(255,255,255,0.105), rgba(37,211,102,0.075)) !important;
+        color: #ffffff !important;
+        border-radius: 22px !important;
+        padding: 18px 22px 18px 16px !important;
+        cursor: pointer !important;
+        transition: 0.25s ease !important;
+        text-align: right !important;
+        display: block !important;
+        width: 100% !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        position: relative !important;
+        overflow: hidden !important;
       }
 
-      #quiz-container .action-row {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 12px;
+      .lq-option::before {
+        content: "" !important;
+        position: absolute !important;
+        right: 0 !important;
+        top: 18px !important;
+        width: 4px !important;
+        height: calc(100% - 36px) !important;
+        border-radius: 999px 0 0 999px !important;
+        background: #25D366 !important;
       }
 
-      #quiz-container .quiz-btn {
-        min-height: 46px;
-        padding: 12px 18px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.12);
-        cursor: pointer;
-        font-weight: 950;
-        transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
+      .lq-option:hover {
+        transform: translateY(-4px) !important;
+        background: rgba(37,211,102,0.12) !important;
+        border-color: rgba(37,211,102,0.62) !important;
+        box-shadow: 0 16px 38px rgba(0,0,0,0.35) !important;
       }
 
-      #quiz-container .quiz-btn:hover {
-        transform: translateY(-2px);
-        opacity: 0.92;
+      .lq-option strong {
+        display: block !important;
+        font-size: 16px !important;
+        margin-bottom: 8px !important;
+        color: #ffffff !important;
+        line-height: 1.65 !important;
+        font-weight: 800 !important;
       }
 
-      #quiz-container .quiz-btn.primary {
-        color: #111;
-        background: linear-gradient(135deg, var(--quiz-gold), var(--quiz-gold-2));
-        box-shadow: 0 10px 24px rgba(214,168,79,0.16);
+      .lq-option small {
+        display: block !important;
+        color: #d6d6d6 !important;
+        line-height: 1.7 !important;
+        font-size: 12px !important;
+        font-weight: 400 !important;
       }
 
-      #quiz-container .quiz-btn.secondary {
-        color: var(--quiz-text);
-        background: rgba(255,255,255,0.06);
+      .lq-option.disabled {
+        pointer-events: none !important;
       }
 
-      #quiz-container .quiz-btn.danger {
-        color: #fff;
-        background: rgba(239,68,68,0.18);
-        border-color: rgba(239,68,68,0.45);
+      .lq-option.correct {
+        background: rgba(37,211,102,0.20) !important;
+        border-color: rgba(37,211,102,0.9) !important;
       }
 
-      @keyframes quizFadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(12px);
+      .lq-option.wrong {
+        background: rgba(239,68,68,0.18) !important;
+        border-color: rgba(239,68,68,0.75) !important;
+        animation: lqShake 0.28s ease both !important;
+      }
+
+      .lq-coupon {
+        max-width: 760px !important;
+        margin: 22px auto 0 !important;
+        padding: 15px !important;
+        border-radius: 22px !important;
+        border: 1px dashed rgba(37,211,102,0.35) !important;
+        background: rgba(0,0,0,0.25) !important;
+      }
+
+      .lq-coupon-title {
+        color: #d6d6d6 !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        margin-bottom: 10px !important;
+      }
+
+      .lq-coupon-slots {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+      }
+
+      .lq-slot {
+        min-height: 44px !important;
+        border-radius: 999px !important;
+        border: 1px solid rgba(255,255,255,0.12) !important;
+        background: rgba(255,255,255,0.08) !important;
+        color: #d6d6d6 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 13px !important;
+        font-weight: 800 !important;
+        letter-spacing: 1px !important;
+      }
+
+      .lq-slot.open {
+        background: #25D366 !important;
+        color: #000000 !important;
+        border-color: rgba(37,211,102,0.9) !important;
+        animation: lqPop 0.32s ease both !important;
+      }
+
+      .lq-actions {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        flex-wrap: wrap !important;
+        margin-top: 24px !important;
+      }
+
+      .lq-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 46px !important;
+        padding: 0 22px !important;
+        border-radius: 999px !important;
+        font-size: 13px !important;
+        font-weight: 800 !important;
+        cursor: pointer !important;
+        text-decoration: none !important;
+        transition: 0.22s ease !important;
+      }
+
+      .lq-btn.primary {
+        border: 1px solid rgba(37,211,102,0.82) !important;
+        background: #25D366 !important;
+        color: #000000 !important;
+      }
+
+      .lq-btn.secondary {
+        border: 1px solid rgba(255,255,255,0.18) !important;
+        background: rgba(255,255,255,0.08) !important;
+        color: #ffffff !important;
+      }
+
+      .lq-btn:hover {
+        transform: translateY(-2px) !important;
+      }
+
+      .lq-result {
+        animation: lqFade 0.28s ease !important;
+      }
+
+      .lq-result-icon {
+        width: 76px !important;
+        height: 76px !important;
+        border-radius: 24px !important;
+        margin: 0 auto 16px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: rgba(37,211,102,0.12) !important;
+        border: 1px solid rgba(37,211,102,0.38) !important;
+        color: #25D366 !important;
+        font-size: 34px !important;
+        font-weight: 800 !important;
+      }
+
+      .lq-result-icon.error {
+        background: rgba(239,68,68,0.14) !important;
+        border-color: rgba(239,68,68,0.42) !important;
+        color: #ffb4b4 !important;
+      }
+
+      .lq-final-coupon {
+        width: fit-content !important;
+        max-width: 100% !important;
+        margin: 18px auto 0 !important;
+        padding: 14px 28px !important;
+        border-radius: 999px !important;
+        background: #25D366 !important;
+        color: #000000 !important;
+        font-size: clamp(22px, 4vw, 34px) !important;
+        font-weight: 800 !important;
+        letter-spacing: 2px !important;
+        word-break: break-word !important;
+      }
+
+      @keyframes lqButtonShake {
+        0%, 82%, 100% { transform: translateY(-50%) translateX(0); }
+        85% { transform: translateY(-50%) translateX(-4px); }
+        88% { transform: translateY(-50%) translateX(4px); }
+        91% { transform: translateY(-50%) translateX(-3px); }
+        94% { transform: translateY(-50%) translateX(3px); }
+        97% { transform: translateY(-50%) translateX(-1px); }
+      }
+
+      @keyframes lqFade {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes lqPop {
+        from { opacity: 0.4; transform: scale(0.92); }
+        to { opacity: 1; transform: scale(1); }
+      }
+
+      @keyframes lqShake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-4px); }
+        75% { transform: translateX(4px); }
+      }
+
+      @keyframes lqPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+
+      @media (max-width: 760px) {
+        #${CONFIG.overlayId} {
+          padding: 10px !important;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
 
-      @keyframes quizPop {
-        0% {
-          transform: scale(0.92);
-          opacity: 0.45;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-
-      @keyframes quizPulse {
-        0%, 100% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
-        }
-      }
-
-      @keyframes quizShake {
-        0%, 100% {
-          transform: translateX(0);
-        }
-        25% {
-          transform: translateX(-4px);
-        }
-        75% {
-          transform: translateX(4px);
-        }
-      }
-
-      @media (max-width: 600px) {
-        #quiz-container {
-          padding: 14px;
-          border-radius: 18px;
-          margin: 16px 0;
+        #${CONFIG.finderId} {
+          padding: 22px 10px !important;
+          border-radius: 22px !important;
+          max-height: 90vh !important;
         }
 
-        #quiz-container .quiz-card {
-          padding: 16px;
-          border-radius: 18px;
+        .lq-box,
+        .lq-launch-box {
+          padding: 25px 12px 20px !important;
+          border-radius: 22px !important;
         }
 
-        #quiz-container .quiz-top {
-          flex-direction: column;
+        .lq-options,
+        .lq-launch-features {
+          grid-template-columns: 1fr !important;
+          gap: 12px !important;
         }
 
-        #quiz-container .timer-pill {
-          width: 100%;
+        .lq-option {
+          min-height: auto !important;
+          padding: 16px 13px !important;
         }
 
-        #quiz-container .quiz-title {
-          font-size: 22px;
+        .lq-coupon-slots {
+          grid-template-columns: 1fr !important;
         }
 
-        #quiz-container .question {
-          font-size: 16px;
+        .lq-actions {
+          flex-direction: column !important;
         }
 
-        #quiz-container .option {
-          padding: 12px;
-          min-height: 52px;
+        .lq-btn,
+        .lq-main-btn {
+          width: 100% !important;
         }
 
-        #quiz-container .option-text {
-          font-size: 14px;
-        }
-
-        #quiz-container .coupon-slot {
-          min-width: 80px;
-        }
-
-        #quiz-container .final-coupon {
-          font-size: 22px;
-          width: 100%;
-        }
-
-        #quiz-container .quiz-btn {
-          width: 100%;
+        #${CONFIG.floatingBtnId} {
+          right: 8px !important;
+          width: 70px !important;
+          min-width: 70px !important;
+          height: 74px !important;
+          font-size: 10px !important;
+          padding: 7px 6px !important;
+          border-radius: 18px 0 0 18px !important;
         }
       }
     `;
@@ -534,20 +718,8 @@
   }
 
   // ================= HELPERS =================
-  function getContainer() {
-    let container = document.getElementById("quiz-container");
-
-    if (!container) {
-      container = document.createElement("div");
-      container.id = "quiz-container";
-      document.body.appendChild(container);
-    }
-
-    return container;
-  }
-
   function escapeHTML(value) {
-    return String(value)
+    return String(value || "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -566,34 +738,205 @@
     return arr;
   }
 
-  function pickQuestions() {
-    currentQuestions = shuffleArray(QUESTIONS).slice(0, QUESTION_COUNT);
+  function normalizeQuestion(question) {
+    const options = question.o.map(function (text, index) {
+      return {
+        text: text,
+        correct: index === question.a
+      };
+    });
+
+    const shuffledOptions = shuffleArray(options);
+    const correctIndex = shuffledOptions.findIndex(function (option) {
+      return option.correct;
+    });
+
+    return {
+      q: question.q,
+      o: shuffledOptions.map(function (option) {
+        return option.text;
+      }),
+      a: correctIndex
+    };
   }
 
-  function resetCoupon() {
-    currentCoupon = Array(QUESTION_COUNT).fill("");
-  }
-
-  function getProgressPercent() {
+  function getProgress() {
     return Math.round((step / QUESTION_COUNT) * 100);
   }
 
-  function renderCouponSlots() {
-    return COUPON_PARTS.map(function (part, index) {
-      const isOpen = Boolean(currentCoupon[index]);
+  function couponCode() {
+    return CONFIG.couponParts.join("");
+  }
+
+  function renderSlots() {
+    return CONFIG.couponParts.map(function (part, index) {
+      const opened = currentCoupon[index];
+
       return `
-        <div class="coupon-slot ${isOpen ? "open" : ""}">
-          ${isOpen ? escapeHTML(part) : "???"}
+        <div class="lq-slot ${opened ? "open" : ""}">
+          ${opened ? escapeHTML(part) : "???"}
         </div>
       `;
     }).join("");
   }
 
-  function updateTimerUI() {
-    const timerEl = document.getElementById("timer");
+  function getContainer() {
+    let container = document.getElementById(CONFIG.containerId);
+
+    if (!container) {
+      container = document.createElement("div");
+      container.id = CONFIG.containerId;
+      document.body.appendChild(container);
+    }
+
+    return container;
+  }
+
+  // ================= DOM CREATE =================
+  function removeOldQuiz() {
+    const oldOverlay = document.getElementById(CONFIG.overlayId);
+    const oldButton = document.getElementById(CONFIG.floatingBtnId);
+
+    if (oldOverlay) oldOverlay.remove();
+    if (oldButton) oldButton.remove();
+  }
+
+  function createInlineLaunch() {
+    const container = getContainer();
+
+    container.innerHTML = `
+      <div class="lq-launch-card">
+        <div class="lq-launch-box">
+          <div class="lq-badge">LIMITLESS QUIZ CHALLENGE</div>
+
+          <h2 class="lq-title">
+            جاوب واكسب <span>كوبون خصم</span>
+          </h2>
+
+          <p class="lq-subtitle">
+            اختبر معلوماتك في المكملات الغذائية. جاوب على ${QUESTION_COUNT} أسئلة صح قبل انتهاء الوقت وافتح الكوبون.
+          </p>
+
+          <div class="lq-launch-features">
+            <div class="lq-feature">
+              <strong>${QUESTION_COUNT}</strong>
+              <small>أسئلة عشوائية</small>
+            </div>
+
+            <div class="lq-feature">
+              <strong>${CONFIG.timeLimit}s</strong>
+              <small>وقت محدود</small>
+            </div>
+
+            <div class="lq-feature">
+              <strong>خصم</strong>
+              <small>كوبون فوري</small>
+            </div>
+          </div>
+
+          <button class="lq-main-btn" type="button" data-lq-open>
+            ابدأ الاختبار الآن
+          </button>
+        </div>
+      </div>
+    `;
+
+    const openBtn = container.querySelector("[data-lq-open]");
+    if (openBtn) {
+      openBtn.addEventListener("click", function () {
+        startGame();
+      });
+    }
+  }
+
+  function createFloatingButton() {
+    if (!CONFIG.showFloatingButton) return;
+
+    const btn = document.createElement("button");
+    btn.id = CONFIG.floatingBtnId;
+    btn.type = "button";
+    btn.innerHTML = "<span>اكسب</span><span>كوبون</span><span>خصم</span>";
+
+    btn.addEventListener("click", function (event) {
+      event.preventDefault();
+      startGame();
+    });
+
+    document.body.appendChild(btn);
+  }
+
+  function createOverlay() {
+    const overlay = document.createElement("div");
+    overlay.id = CONFIG.overlayId;
+
+    overlay.innerHTML = `
+      <section id="${CONFIG.finderId}">
+        <button type="button" class="lq-close" aria-label="Close">×</button>
+
+        <div class="lq-box">
+          <div id="LimitlessQuizContent"></div>
+        </div>
+      </section>
+    `;
+
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener("click", function (event) {
+      const closeBtn = event.target.closest(".lq-close");
+
+      if (closeBtn || event.target === overlay) {
+        closeQuiz();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeQuiz();
+      }
+    });
+  }
+
+  function openQuiz() {
+    const overlay = document.getElementById(CONFIG.overlayId);
+
+    if (!overlay) return;
+
+    previousBodyOverflow = document.body.style.overflow || "";
+    overlay.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeQuiz() {
+    const overlay = document.getElementById(CONFIG.overlayId);
+
+    if (!overlay) return;
+
+    clearInterval(timer);
+    overlay.classList.remove("active");
+    document.body.style.overflow = previousBodyOverflow;
+  }
+
+  // ================= TIMER =================
+  function startTimer() {
+    clearInterval(timer);
+    updateTimer();
+
+    timer = setInterval(function () {
+      timeLeft--;
+      updateTimer();
+
+      if (timeLeft <= 0) {
+        loseGame("الوقت خلص!", "حاول مرة تانية وافتح الكوبون قبل انتهاء الوقت.");
+      }
+    }, 1000);
+  }
+
+  function updateTimer() {
+    const timerEl = document.querySelector("#" + CONFIG.overlayId + " .lq-timer");
+
     if (!timerEl) return;
 
-    timerEl.innerHTML = `⏱ ${timeLeft}s`;
+    timerEl.innerHTML = "⏱ " + timeLeft + "s";
 
     if (timeLeft <= 10) {
       timerEl.classList.add("danger");
@@ -602,202 +945,121 @@
     }
   }
 
-  function startTimer() {
-    clearInterval(timer);
-
-    updateTimerUI();
-
-    timer = setInterval(function () {
-      timeLeft--;
-      updateTimerUI();
-
-      if (timeLeft <= 0) {
-        loseGame("الوقت خلص!", "قربت توصل للخصم. حاول مرة تانية وافتح الكوبون قبل انتهاء الوقت.");
-      }
-    }, 1000);
-  }
-
-  function copyText(text, button) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () {
-        button.innerText = "تم نسخ الكوبون";
-      }).catch(function () {
-        fallbackCopy(text, button);
-      });
-    } else {
-      fallbackCopy(text, button);
-    }
-  }
-
-  function fallbackCopy(text, button) {
-    const input = document.createElement("textarea");
-    input.value = text;
-    input.style.position = "fixed";
-    input.style.opacity = "0";
-    document.body.appendChild(input);
-    input.focus();
-    input.select();
-
-    try {
-      document.execCommand("copy");
-      button.innerText = "تم نسخ الكوبون";
-    } catch (e) {
-      button.innerText = text;
-    }
-
-    document.body.removeChild(input);
-  }
-
   // ================= GAME =================
   function startGame() {
     QUESTIONS = window.QUIZ_QUESTIONS || [];
 
-    const container = getContainer();
-
     if (!QUESTIONS.length) {
-      container.innerHTML = `
-        <div class="quiz-shell">
-          <div class="quiz-card">
-            <div class="result-screen">
-              <div class="result-icon error-icon">!</div>
-              <h3 class="result-title">لم يتم تحميل الأسئلة</h3>
-              <p class="result-text">تأكد أن ملف questions.js موجود قبل ملف quiz-game.js في كود Easy Orders.</p>
-            </div>
-          </div>
-        </div>
-      `;
+      showMessage("لم يتم تحميل الأسئلة", "تأكد إن ملف questions.js موجود قبل ملف quiz-game.js.");
       return;
     }
 
     if (QUESTIONS.length < QUESTION_COUNT) {
-      container.innerHTML = `
-        <div class="quiz-shell">
-          <div class="quiz-card">
-            <div class="result-screen">
-              <div class="result-icon error-icon">!</div>
-              <h3 class="result-title">عدد الأسئلة غير كافي</h3>
-              <p class="result-text">لازم يكون عندك على الأقل ${QUESTION_COUNT} أسئلة.</p>
-            </div>
-          </div>
-        </div>
-      `;
+      showMessage("عدد الأسئلة غير كافي", "لازم يكون عندك على الأقل " + QUESTION_COUNT + " أسئلة.");
       return;
     }
 
+    currentQuestions = shuffleArray(QUESTIONS).slice(0, QUESTION_COUNT).map(normalizeQuestion);
+    currentCoupon = Array(QUESTION_COUNT).fill("");
     step = 0;
-    timeLeft = TIME_LIMIT;
+    timeLeft = CONFIG.timeLimit;
     locked = false;
-    resetCoupon();
-    pickQuestions();
+
+    openQuiz();
     renderQuestion();
     startTimer();
   }
 
   function renderQuestion() {
-    const container = getContainer();
+    const content = document.getElementById("LimitlessQuizContent");
     const q = currentQuestions[step];
 
-    if (!q || !Array.isArray(q.o)) {
-      loseGame("حدث خطأ في السؤال", "راجع تنسيق ملف questions.js وتأكد أن كل سؤال يحتوي على q و o و a.");
-      return;
-    }
+    if (!content || !q) return;
 
-    const letters = ["A", "B", "C", "D", "E", "F"];
-    const progress = getProgressPercent();
+    const letters = ["A", "B", "C", "D"];
+    const progress = getProgress();
 
-    let optionsHTML = "";
-
-    q.o.forEach(function (option, index) {
-      optionsHTML += `
-        <button class="option" type="button" data-answer="${index}">
-          <span class="option-letter">${letters[index] || index + 1}</span>
-          <span class="option-text">${escapeHTML(option)}</span>
+    const optionsHTML = q.o.map(function (option, index) {
+      return `
+        <button type="button" class="lq-option" data-answer="${index}">
+          <strong>${letters[index] || index + 1}. ${escapeHTML(option)}</strong>
+          <small>اختار الإجابة لو متأكد، أي إجابة غلط هتعيد المحاولة من البداية.</small>
         </button>
       `;
-    });
+    }).join("");
 
-    container.innerHTML = `
-      <div class="quiz-shell">
-        <div class="quiz-card">
-          <div class="quiz-top">
-            <div>
-              <div class="quiz-badge">SUPPLEMENT CHALLENGE</div>
-              <h2 class="quiz-title">اختبر معلوماتك واربح خصم فوري</h2>
-              <p class="quiz-subtitle">جاوب على ${QUESTION_COUNT} أسئلة صح وافتح الكوبون خطوة بخطوة.</p>
-            </div>
+    content.innerHTML = `
+      <div class="lq-question-wrap">
+        <div class="lq-topline">
+          <div class="lq-pill">السؤال ${step + 1} من ${QUESTION_COUNT}</div>
+          <div class="lq-timer">⏱ ${timeLeft}s</div>
+        </div>
 
-            <div id="timer" class="timer-pill">⏱ ${timeLeft}s</div>
-          </div>
+        <h2 class="lq-heading">
+          اختبر معلوماتك واربح <span>كوبون خصم</span>
+        </h2>
 
-          <div class="progress-wrap">
-            <div class="progress-meta">
-              <span>السؤال ${step + 1} من ${QUESTION_COUNT}</span>
-              <span>${progress}% مكتمل</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill" style="width:${progress}%"></div>
-            </div>
-          </div>
+        <p class="lq-desc">
+          جاوب صح وافتح جزء من الكوبون. الأسئلة بتتغير عشوائيًا في كل محاولة.
+        </p>
 
-          <div class="question-box">
-            <div class="question-label">اختر الإجابة الصحيحة</div>
-            <p class="question">${escapeHTML(q.q)}</p>
+        <div class="lq-progress">
+          <div class="lq-progress-fill" style="width:${progress}%"></div>
+        </div>
 
-            <div class="options-grid">
-              ${optionsHTML}
-            </div>
-          </div>
+        <span class="lq-step">اختر الإجابة الصحيحة</span>
 
-          <div class="coupon-area">
-            <div class="coupon-title">الكوبون الخاص بك</div>
-            <div class="coupon-slots">
-              ${renderCouponSlots()}
-            </div>
-            <div class="quiz-note">كل إجابة صحيحة تفتح جزء من الكوبون.</div>
+        <h3 class="lq-question">${escapeHTML(q.q)}</h3>
+
+        <div class="lq-options">
+          ${optionsHTML}
+        </div>
+
+        <div class="lq-coupon">
+          <div class="lq-coupon-title">الكوبون الخاص بك</div>
+          <div class="lq-coupon-slots">
+            ${renderSlots()}
           </div>
         </div>
       </div>
     `;
 
-    updateTimerUI();
+    updateTimer();
 
-    const options = container.querySelectorAll(".option");
-
-    options.forEach(function (option) {
-      option.addEventListener("click", function () {
-        const selectedAnswer = Number(this.getAttribute("data-answer"));
-        answer(selectedAnswer, this);
+    content.querySelectorAll(".lq-option").forEach(function (button) {
+      button.addEventListener("click", function () {
+        answer(Number(this.getAttribute("data-answer")), this);
       });
     });
   }
 
-  function answer(selectedAnswer, selectedElement) {
+  function answer(selected, selectedButton) {
     if (locked) return;
     locked = true;
 
     const q = currentQuestions[step];
-    const allOptions = document.querySelectorAll("#quiz-container .option");
+    const options = document.querySelectorAll("#" + CONFIG.overlayId + " .lq-option");
 
-    allOptions.forEach(function (option) {
+    options.forEach(function (option) {
       option.classList.add("disabled");
     });
 
-    if (selectedAnswer !== q.a) {
-      selectedElement.classList.add("wrong");
+    if (selected !== q.a) {
+      selectedButton.classList.add("wrong");
 
       setTimeout(function () {
-        loseGame("إجابة غلط!", "قربت توصل للخصم. حاول مرة تانية وافتح الكوبون قبل انتهاء الوقت.");
+        loseGame("إجابة غلط!", "قربت توصل للخصم. حاول مرة تانية وجاوب على الأسئلة صح.");
       }, 650);
 
       return;
     }
 
-    selectedElement.classList.add("correct");
-    currentCoupon[step] = COUPON_PARTS[step] || "";
+    selectedButton.classList.add("correct");
+    currentCoupon[step] = CONFIG.couponParts[step];
 
-    const slots = document.querySelector("#quiz-container .coupon-slots");
+    const slots = document.querySelector("#" + CONFIG.overlayId + " .lq-coupon-slots");
     if (slots) {
-      slots.innerHTML = renderCouponSlots();
+      slots.innerHTML = renderSlots();
     }
 
     setTimeout(function () {
@@ -816,45 +1078,49 @@
   function finishGame() {
     clearInterval(timer);
 
-    const finalCoupon = currentCoupon.join("");
-    const container = getContainer();
+    const content = document.getElementById("LimitlessQuizContent");
+    const code = couponCode();
 
-    container.innerHTML = `
-      <div class="quiz-shell">
-        <div class="quiz-card">
-          <div class="result-screen">
-            <div class="result-icon">🎉</div>
-            <h3 class="result-title">مبروك!</h3>
-            <p class="result-text">فتحت كوبون الخصم بنجاح. انسخ الكوبون واستخدمه أثناء الطلب.</p>
+    if (!content) return;
 
-            <div class="final-coupon">${escapeHTML(finalCoupon)}</div>
+    content.innerHTML = `
+      <div class="lq-result">
+        <div class="lq-result-icon">✓</div>
 
-            <div class="action-row">
-              <button class="quiz-btn primary" id="copy-coupon" type="button">نسخ الكوبون</button>
-              ${SHOP_URL ? `<button class="quiz-btn secondary" id="shop-now" type="button">تسوق الآن</button>` : ""}
-              <button class="quiz-btn secondary" id="play-again" type="button">العب مرة أخرى</button>
-            </div>
-          </div>
+        <h2 class="lq-heading">
+          مبروك! فتحت <span>كوبون الخصم</span>
+        </h2>
+
+        <p class="lq-desc">
+          انسخ الكوبون واستخدمه أثناء إتمام الطلب.
+        </p>
+
+        <div class="lq-final-coupon">${escapeHTML(code)}</div>
+
+        <div class="lq-actions">
+          <button class="lq-btn primary" type="button" data-copy>
+            نسخ الكوبون
+          </button>
+
+          <button class="lq-btn secondary" type="button" data-restart>
+            العب مرة أخرى
+          </button>
         </div>
       </div>
     `;
 
-    const copyBtn = document.getElementById("copy-coupon");
+    const copyBtn = content.querySelector("[data-copy]");
+    const restartBtn = content.querySelector("[data-restart]");
+
     if (copyBtn) {
       copyBtn.addEventListener("click", function () {
-        copyText(finalCoupon, this);
+        copyCoupon(code, this);
       });
     }
 
-    const playAgainBtn = document.getElementById("play-again");
-    if (playAgainBtn) {
-      playAgainBtn.addEventListener("click", startGame);
-    }
-
-    const shopBtn = document.getElementById("shop-now");
-    if (shopBtn) {
-      shopBtn.addEventListener("click", function () {
-        window.location.href = SHOP_URL;
+    if (restartBtn) {
+      restartBtn.addEventListener("click", function () {
+        startGame();
       });
     }
   }
@@ -862,39 +1128,122 @@
   function loseGame(title, text) {
     clearInterval(timer);
 
-    const container = getContainer();
+    const content = document.getElementById("LimitlessQuizContent");
 
-    container.innerHTML = `
-      <div class="quiz-shell">
-        <div class="quiz-card">
-          <div class="result-screen">
-            <div class="result-icon error-icon">×</div>
-            <h3 class="result-title">${escapeHTML(title)}</h3>
-            <p class="result-text">${escapeHTML(text)}</p>
+    if (!content) return;
 
-            <div class="action-row">
-              <button class="quiz-btn primary" id="restart-game" type="button">إعادة المحاولة</button>
-            </div>
-          </div>
+    content.innerHTML = `
+      <div class="lq-result">
+        <div class="lq-result-icon error">×</div>
+
+        <h2 class="lq-heading">${escapeHTML(title)}</h2>
+
+        <p class="lq-desc">${escapeHTML(text)}</p>
+
+        <div class="lq-actions">
+          <button class="lq-btn primary" type="button" data-restart>
+            إعادة المحاولة
+          </button>
+
+          <button class="lq-btn secondary" type="button" data-close>
+            إغلاق
+          </button>
         </div>
       </div>
     `;
 
-    const restartBtn = document.getElementById("restart-game");
+    const restartBtn = content.querySelector("[data-restart]");
+    const closeBtn = content.querySelector("[data-close]");
+
     if (restartBtn) {
-      restartBtn.addEventListener("click", startGame);
+      restartBtn.addEventListener("click", function () {
+        startGame();
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function () {
+        closeQuiz();
+      });
     }
   }
 
-  // ================= START =================
-  function initQuizGame() {
-    injectStyle();
-    startGame();
+  function showMessage(title, text) {
+    openQuiz();
+
+    const content = document.getElementById("LimitlessQuizContent");
+
+    if (!content) return;
+
+    content.innerHTML = `
+      <div class="lq-result">
+        <div class="lq-result-icon error">!</div>
+
+        <h2 class="lq-heading">${escapeHTML(title)}</h2>
+
+        <p class="lq-desc">${escapeHTML(text)}</p>
+
+        <div class="lq-actions">
+          <button class="lq-btn secondary" type="button" data-close>
+            إغلاق
+          </button>
+        </div>
+      </div>
+    `;
+
+    const closeBtn = content.querySelector("[data-close]");
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeQuiz);
+    }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initQuizGame);
-  } else {
-    initQuizGame();
+  function copyCoupon(code, button) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code).then(function () {
+        button.innerText = "تم نسخ الكوبون";
+      }).catch(function () {
+        fallbackCopy(code, button);
+      });
+    } else {
+      fallbackCopy(code, button);
+    }
   }
+
+  function fallbackCopy(code, button) {
+    const textarea = document.createElement("textarea");
+    textarea.value = code;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    try {
+      document.execCommand("copy");
+      button.innerText = "تم نسخ الكوبون";
+    } catch (e) {
+      button.innerText = code;
+    }
+
+    document.body.removeChild(textarea);
+  }
+
+  // ================= INIT =================
+  function init() {
+    injectStyle();
+    removeOldQuiz();
+    createInlineLaunch();
+    createOverlay();
+    createFloatingButton();
+
+    if (CONFIG.autoOpenDelay && CONFIG.autoOpenDelay > 0) {
+      setTimeout(function () {
+        startGame();
+      }, CONFIG.autoOpenDelay);
+    }
+  }
+
+  ready(init);
 })();
