@@ -1,5 +1,5 @@
 (function(){
-if(window.**LIMITLESS_QZ**)return;window.**LIMITLESS_QZ**=1;
+if(window._LIMITLESS_QZ)return;window.LIMITLESS_QZ=1;
 
 var css=`@import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700;800;900&display=swap"); #pqx,#pqo{direction:rtl;font-family:"Readex Pro",Arial,sans-serif;color:#fff;text-align:center} #pqx *,#pqo *{box-sizing:border-box;font-family:"Readex Pro",Arial,sans-serif}
 .pqwrap{position:relative;overflow:hidden;border-radius:30px;border:1px solid rgba(229,231,235,.18);padding:26px 14px;background:radial-gradient(circle at 85% 0%,rgba(255,255,255,.13),transparent 30%),radial-gradient(circle at 5% 90%,rgba(221,227,234,.11),transparent 32%),linear-gradient(135deg,#000,#101010 52%,#050505);box-shadow:0 26px 80px rgba(0,0,0,.55)} #pqx .pqwrap{max-width:960px;margin:22px auto} #pqo{position:fixed;inset:0;z-index:2147483600;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:14px} #pqo .pqwrap{width:100%;max-width:940px;max-height:92vh;overflow:auto}
