@@ -7,6 +7,8 @@
     overlayId: "limitlessNewQuizOverlay",
     boxId: "limitlessNewQuizBox",
     contentId: "limitlessNewQuizContent",
+    hostId: "limitlessNewQuizHost",
+    targetSelector: ".p_details_container .bg-white.rounded-lg.border.border-gray-300.mt-8.max-w-full",
     maxQuestions: 8,
     whatsappLink: "https://wa.me/201024348002",
     couponCode: "Limitless50"
@@ -56,20 +58,24 @@
   function cleanOldGame() {
     var oldOverlay = $(GAME.overlayId);
     var oldBtn = $(GAME.buttonId);
+    var oldHost = $(GAME.hostId);
     var oldStyle = $(GAME.styleId);
 
     if (oldOverlay) oldOverlay.remove();
     if (oldBtn) oldBtn.remove();
+    if (oldHost) oldHost.remove();
     if (oldStyle) oldStyle.remove();
   }
 
   function injectStyle() {
     var css = [
-      "#" + GAME.buttonId + "{position:fixed!important;left:14px!important;bottom:92px!important;z-index:2147482500!important;width:74px!important;min-height:74px!important;border:1px solid rgba(37,211,102,.65)!important;border-radius:22px!important;background:linear-gradient(135deg,#000 0%,#111 55%,#073d1b 100%)!important;color:#fff!important;font-family:Readex Pro,Arial,sans-serif!important;font-size:11px!important;font-weight:900!important;line-height:1.35!important;text-align:center!important;cursor:pointer!important;box-shadow:0 14px 34px rgba(0,0,0,.42)!important;padding:9px 7px!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:3px!important;}",
-      "#" + GAME.buttonId + ":hover{transform:translateY(-2px)!important;box-shadow:0 18px 42px rgba(0,0,0,.52)!important;}",
+      "#" + GAME.hostId + "{width:100%!important;max-width:100%!important;margin:14px 0 18px!important;padding:0!important;box-sizing:border-box!important;direction:rtl!important;font-family:Readex Pro,Arial,sans-serif!important;}",
+      "#" + GAME.buttonId + "{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;z-index:5!important;width:100%!important;min-height:76px!important;height:auto!important;border:1px solid rgba(37,211,102,.65)!important;border-radius:18px!important;background:linear-gradient(135deg,#000 0%,#111 55%,#073d1b 100%)!important;color:#fff!important;font-family:Readex Pro,Arial,sans-serif!important;font-size:13px!important;font-weight:900!important;line-height:1.5!important;text-align:center!important;cursor:pointer!important;box-shadow:0 14px 34px rgba(0,0,0,.28)!important;padding:13px 14px!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:4px!important;box-sizing:border-box!important;}",
+      "#" + GAME.buttonId + ":hover{transform:translateY(-2px)!important;box-shadow:0 18px 42px rgba(0,0,0,.36)!important;border-color:rgba(37,211,102,.9)!important;}",
       "#" + GAME.overlayId + "{position:fixed!important;inset:0!important;z-index:2147482600!important;background:rgba(0,0,0,.78)!important;display:none!important;align-items:center!important;justify-content:center!important;padding:16px!important;box-sizing:border-box!important;font-family:Readex Pro,Arial,sans-serif!important;direction:rtl!important;}",
       "#" + GAME.overlayId + ".active{display:flex!important;}",
       "#" + GAME.boxId + "{width:100%!important;max-width:760px!important;max-height:92vh!important;overflow:auto!important;border-radius:28px!important;background:linear-gradient(135deg,#000 0%,#111 55%,#041f0f 100%)!important;color:#fff!important;border:1px solid rgba(37,211,102,.34)!important;box-shadow:0 28px 90px rgba(0,0,0,.72)!important;position:relative!important;padding:26px 18px!important;box-sizing:border-box!important;text-align:center!important;}",
+      "#" + GAME.boxId + " *{box-sizing:border-box!important;font-family:Readex Pro,Arial,sans-serif!important;}",
       ".lnq-close{position:absolute!important;top:13px!important;left:13px!important;width:40px!important;height:40px!important;border-radius:50%!important;border:1px solid rgba(255,255,255,.17)!important;background:rgba(255,255,255,.08)!important;color:#fff!important;font-size:26px!important;line-height:1!important;cursor:pointer!important;}",
       ".lnq-title{font-size:clamp(25px,4vw,40px)!important;line-height:1.25!important;margin:10px 0 9px!important;font-weight:900!important;color:#fff!important;}",
       ".lnq-title span{display:inline-block!important;background:#25D366!important;color:#000!important;border-radius:999px!important;padding:1px 10px!important;}",
@@ -93,7 +99,7 @@
       ".lnq-btn.secondary{background:rgba(255,255,255,.08)!important;color:#fff!important;border-color:rgba(255,255,255,.18)!important;}",
       ".lnq-result-score{font-size:43px!important;font-weight:900!important;color:#25D366!important;margin:5px 0!important;line-height:1!important;}",
       ".lnq-result-text{font-size:15px!important;color:#ddd!important;line-height:1.9!important;margin:10px auto!important;max-width:560px!important;}",
-      "@media(max-width:760px){#" + GAME.buttonId + "{left:10px!important;bottom:82px!important;width:68px!important;min-height:68px!important;font-size:10px!important;border-radius:20px!important;}#" + GAME.boxId + "{padding:24px 12px!important;border-radius:23px!important;max-height:90vh!important;}.lnq-options{grid-template-columns:1fr!important;gap:10px!important;}.lnq-option{min-height:auto!important;font-size:13px!important;padding:13px!important;}.lnq-actions{flex-direction:column!important;}.lnq-btn,.lnq-link{width:100%!important;}.lnq-coupon{font-size:12px!important;gap:6px!important;padding:9px 10px!important;}.lnq-coupon b{font-size:11px!important;padding:4px 8px!important;}}"
+      "@media(max-width:760px){#" + GAME.hostId + "{margin:12px 0 16px!important;}#" + GAME.buttonId + "{min-height:70px!important;font-size:12px!important;border-radius:16px!important;padding:12px 12px!important;}#" + GAME.boxId + "{padding:24px 12px!important;border-radius:23px!important;max-height:90vh!important;}.lnq-options{grid-template-columns:1fr!important;gap:10px!important;}.lnq-option{min-height:auto!important;font-size:13px!important;padding:13px!important;}.lnq-actions{flex-direction:column!important;}.lnq-btn,.lnq-link{width:100%!important;}.lnq-coupon{font-size:12px!important;gap:6px!important;padding:9px 10px!important;}.lnq-coupon b{font-size:11px!important;padding:4px 8px!important;}}"
     ].join("\n");
 
     var style = document.createElement("style");
@@ -146,22 +152,52 @@
     return round;
   }
 
+  function insertGameUnderTarget(host) {
+    var tries = 0;
+
+    function tryInsert() {
+      var target =
+        document.querySelector(GAME.targetSelector) ||
+        document.querySelector(".p_details_container .bg-white.rounded-lg.border.border-gray-300") ||
+        document.querySelector(".p_details_container [class*='border-gray-300'][class*='mt-8']");
+
+      if (target && target.parentNode) {
+        target.insertAdjacentElement("afterend", host);
+        return;
+      }
+
+      tries++;
+
+      if (tries < 40) {
+        setTimeout(tryInsert, 250);
+      } else {
+        document.body.appendChild(host);
+      }
+    }
+
+    tryInsert();
+  }
+
   function createFloatingButton() {
+    var host = document.createElement("div");
     var btn = document.createElement("button");
+
+    host.id = GAME.hostId;
 
     btn.id = GAME.buttonId;
     btn.type = "button";
 
-    btn.appendChild(createEl("span", "", "اختبر"));
-    btn.appendChild(createEl("span", "", "معلوماتك"));
-    btn.appendChild(createEl("span", "", "واربح"));
+    btn.innerHTML =
+      "<span style='display:block;font-size:13px;font-weight:900;line-height:1.5;'>اختبر معلوماتك عن المكملات</span>" +
+      "<span style='display:block;font-size:11px;font-weight:700;line-height:1.5;color:#B7F5C8;'>جاوب على أسئلة سريعة واستفد من كود الخصم Limitless50</span>";
 
     btn.addEventListener("click", function (e) {
       e.preventDefault();
       openGame();
     });
 
-    document.body.appendChild(btn);
+    host.appendChild(btn);
+    insertGameUnderTarget(host);
   }
 
   function createOverlay() {
