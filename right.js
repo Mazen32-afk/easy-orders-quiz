@@ -1,778 +1,181 @@
-(()=>{"use strict";
-const C={style:"LimitlessSupplementFinderStyle",btn:"LimitlessFinderFloatingBtn",overlay:"LimitlessFinderOverlay",box:"LimitlessSupplementFinder",wa:"https://wa.me/201024348002",autoOpen:15000};
+(function(){
+if(window.__LIMITLESS_QZ__)return;window.__LIMITLESS_QZ__=1;
 
-const P={
-mass_3000:[["Badass-Mass","Badass Mass"],["Nutriversum-Massgainer","Nutriversum Massgainer"]],
-mass_1000:[["creatine-citrulline-carb-offer","Creatine Citrulline Carb Offer"],["Griffin-Mass-Gainer-6Kg","Griffin Mass Gainer 6Kg"],["anabolic-carb-creatine-offer","Anabolic Carb Creatine Offer"],["Xtreme-Mass-Gainer","Xtreme Mass Gainer"],["unlimited-mass-gainer-anabolic-creatine","Unlimited Mass Gainer + Anabolic Creatine"]],
-mass_under_1000:[["Unlimited-Mass","Unlimited Mass"],["Carb","Carb"],["Griffin-Mass-Gainer-3Kg","Griffin Mass Gainer 3Kg"]],
-muscle_creatine:[["Anabolic-Creatine-200Serv","Anabolic Creatine 200 Serv"],["Dy-Creatine","DY Creatine"],["CreaForce-Creatine-Creapure","CreaForce Creatine Creapure"],["CreaPower","CreaPower"],["BADASS-Creatine","BADASS Creatine"]],
-muscle_creatine_citrulline:[["citrulline-malate-anabolic-creatine-pump","Citrulline Malate + Anabolic Creatine Pump"],["CreaForce-Creapure-Creatine-Citrulline","CreaForce Creapure Creatine Citrulline"],["creapower-creapure-citrulline-malate","CreaPower Creapure Citrulline Malate"],["creatine-citrulline-carb-offer","Creatine Citrulline Carb Offer"],["anabolic-carb-creatine-offer","Anabolic Carb Creatine Offer"]],
-muscle_whey_creatine:[["whey-concentrate-anabolic-creatine","Whey Concentrate + Anabolic Creatine"],["evolve-whey-protein-creatine-offers","Evolve Whey Protein + Creatine Offers"],["Gold-Whey-Isolate-Creatine-Offer","Gold Whey Isolate + Creatine Offer"]],
-fat_strong:[["Black-Spider-Fat-Burner","Black Spider Fat Burner"],["Lipo6","Lipo 6"],["Retatrutide","Retatrutide","يأخذ بعد استشارة طبيب"]],
-fat_light:[["Gold-Whey-Isolate-Creatine-Offer","Gold Whey Isolate + Creatine Offer"],["Xtreme-Whey-Blend","Xtreme Whey Blend"],["evolve-whey-protein-creatine-offers","Evolve Whey Protein + Creatine Offers"],["Gold-Isolate","Gold Isolate"]],
-pump_energy:[["Anabolic-Crazy-Pump-Preworkout","Anabolic Crazy Pump Preworkout"],["Pureganic-Preworkout","Pureganic Preworkout"],["Strongmuscles-Citrulline","Strongmuscles Citrulline"],["Citrulline-Malate","Citrulline Malate"]]
+var css=`@import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700;800;900&display=swap");
+#pqx,#pqo{direction:rtl;font-family:"Readex Pro",Arial,sans-serif;color:#fff;text-align:center}
+#pqx *,#pqo *{box-sizing:border-box;font-family:"Readex Pro",Arial,sans-serif}
+.pqwrap{position:relative;overflow:hidden;border-radius:30px;border:1px solid rgba(229,231,235,.18);padding:26px 14px;background:radial-gradient(circle at 85% 0%,rgba(255,255,255,.13),transparent 30%),radial-gradient(circle at 5% 90%,rgba(221,227,234,.11),transparent 32%),linear-gradient(135deg,#000,#101010 52%,#050505);box-shadow:0 26px 80px rgba(0,0,0,.55)}
+#pqx .pqwrap{max-width:960px;margin:22px auto}
+#pqo{position:fixed;inset:0;z-index:2147483600;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:14px}
+#pqo .pqwrap{width:100%;max-width:940px;max-height:92vh;overflow:auto}
+.pqwrap:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:38px 38px;opacity:.20;pointer-events:none}
+.pqin{position:relative;max-width:880px;margin:auto;border-radius:26px;border:1px solid rgba(255,255,255,.14);background:rgba(10,10,10,.86);padding:26px 14px;box-shadow:0 24px 70px rgba(0,0,0,.52),0 0 24px rgba(229,231,235,.07)}
+.x{position:absolute;left:13px;top:13px;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;font-size:24px;cursor:pointer;z-index:5}
+.lg{max-width:138px;max-height:62px;object-fit:contain;margin:0 auto 14px;display:block}
+.ttl{margin:0 0 12px;font-size:clamp(23px,4vw,41px);line-height:1.4;font-weight:900}
+.ttl span,.hi{display:inline-block;padding:1px 8px;border-radius:999px;color:#000;background:linear-gradient(135deg,#e5e7eb,#fff);font-weight:900}
+.ds{max-width:760px;margin:0 auto 12px;color:#d6d6d6;font-size:14px;line-height:1.95}
+.ds b{color:#fff;font-weight:900}
+.sc{display:inline-flex;margin:8px auto 18px;padding:8px 14px;border-radius:999px;color:#cfcfcf;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);font-size:12px;font-weight:800}
+.bar{width:100%;max-width:600px;height:8px;margin:0 auto 20px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.1)}
+.bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#9ca3af,#fff);transition:.3s}
+.timer{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:150px;margin:0 auto 12px;padding:12px 18px;border-radius:20px;font-size:27px;font-weight:900;color:#fff;background:rgba(34,197,94,.18);border:1px solid rgba(34,197,94,.48);box-shadow:0 0 28px rgba(34,197,94,.14)}
+.timer.red{background:rgba(239,68,68,.92);border-color:rgba(239,68,68,.85);animation:tp .7s infinite}
+.meta{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.pill{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:7px 15px;border-radius:999px;color:#e5e7eb;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);font-size:12px;font-weight:800}
+.q{max-width:790px;margin:12px auto 16px;color:#fff;font-size:clamp(19px,3vw,29px);line-height:1.65;font-weight:900}
+.ops{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:830px;margin:auto}
+.op{min-height:94px;display:flex;align-items:center;gap:12px;width:100%;padding:16px;cursor:pointer;text-align:right;color:#fff;border-radius:22px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.035));transition:.18s}
+.op:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.36);background:rgba(255,255,255,.115)}
+.lt{width:38px;height:38px;min-width:38px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);font-weight:900}
+.op strong{font-size:14px;line-height:1.75}
+.op.ok{border-color:rgba(34,197,94,.85);background:rgba(34,197,94,.22);animation:ok .35s}
+.op.no{border-color:rgba(239,68,68,.9);background:rgba(239,68,68,.22);animation:no .25s}
+.op.off{pointer-events:none}
+.cpn{max-width:540px;margin:20px auto 0;padding:18px 16px;border-radius:24px;color:#fff;background:#020202;border:2px dashed rgba(255,255,255,.72);outline:1px dashed rgba(255,255,255,.30);outline-offset:-9px;box-shadow:inset 0 0 34px rgba(255,255,255,.07),0 14px 42px rgba(0,0,0,.42);font-weight:900;position:relative}
+.cpn:before,.cpn:after{content:"••••••••••";position:absolute;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.48);font-size:12px;letter-spacing:6px}
+.cpn:before{top:5px}.cpn:after{bottom:5px}
+.cpn small{display:block;margin-bottom:9px;color:#d1d5db;font-size:11px;letter-spacing:.8px}
+.seg{display:inline-flex;align-items:center;justify-content:center;min-width:82px;min-height:38px;margin:4px;padding:7px 13px;border-radius:14px;color:#fff;background:#070707;border:1px dashed rgba(255,255,255,.34);font-size:20px;letter-spacing:1px}
+.seg.on{background:#000;color:#fff;border-color:rgba(255,255,255,.9);box-shadow:0 0 18px rgba(255,255,255,.12);animation:pop .25s ease both}
+.act{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn{min-height:48px;padding:0 22px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.09);color:#fff;cursor:pointer;font-size:13px;font-weight:900;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;transition:.18s}
+.btn.p{position:relative;overflow:hidden;color:#000;background:linear-gradient(135deg,#e5e7eb,#fff);border-color:rgba(255,255,255,.8)}
+.btn:hover{transform:translateY(-2px)}
+.ic{width:76px;height:76px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border-radius:24px;color:#000;background:linear-gradient(135deg,#e5e7eb,#fff);font-size:34px;font-weight:900}
+.ic.e{color:#fecaca;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35)}
+.code{display:inline-block;margin:12px auto;padding:18px 34px;border-radius:24px;color:#fff;background:#020202;border:2px dashed rgba(255,255,255,.78);outline:1px dashed rgba(255,255,255,.32);outline-offset:-9px;box-shadow:inset 0 0 36px rgba(255,255,255,.08),0 18px 45px rgba(0,0,0,.38);font-size:clamp(26px,5vw,42px);font-weight:900;letter-spacing:2px;position:relative}
+.code:before,.code:after{content:"••••••••";position:absolute;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.42);font-size:11px;letter-spacing:6px}
+.code:before{top:5px}.code:after{bottom:5px}
+.cd{display:inline-flex;margin:8px auto 16px;padding:8px 14px;border-radius:999px;color:#fff;background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.35);font-weight:900}
+.pg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:20px auto 0;max-width:900px}
+.pc{background:#fff;color:#000;border-radius:22px;padding:10px;text-align:right;box-shadow:0 18px 45px rgba(0,0,0,.35);min-height:auto;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;text-decoration:none;max-width:300px;width:100%;margin:0 auto}
+.pimg{width:100%;aspect-ratio:4/5;height:auto;border-radius:18px;background:#f4f4f5;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:13px}
+.pimg img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;padding:0}
+.ph{width:78px;height:78px;border-radius:18px;background:linear-gradient(135deg,#e5e7eb,#f9fafb);display:flex;align-items:center;justify-content:center;color:#777;font-size:11px;text-align:center;line-height:1.5}
+.kick{display:inline-flex;width:fit-content;padding:5px 10px;border-radius:999px;background:#e5e7eb;color:#1a1a1a;font-size:11px;font-weight:800;margin-bottom:9px}
+.pc h4{margin:0 0 8px;font-size:14px;color:#000;line-height:1.45;font-weight:900;direction:ltr;text-align:left;min-height:auto}
+.price{display:flex;align-items:center;justify-content:flex-start;direction:ltr;margin:0 0 12px;min-height:27px;white-space:nowrap}
+.cur{color:#111;font-size:18px;font-weight:900}
+.load{color:#777;font-size:12px;font-weight:700}
+.pc p{margin:0 0 14px;color:#555;font-size:12px;line-height:1.7;text-align:right}
+.buy{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:43px;padding:0 16px;border-radius:999px;border:1px solid rgba(0,0,0,.85);background:#000;color:#fff;text-decoration:none;font-weight:900;font-size:12px}
+.wa{background:linear-gradient(135deg,#22c55e,#86efac)!important;color:#001b09!important;border-color:rgba(134,239,172,.8)!important}
+@keyframes tp{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes ok{50%{transform:scale(1.025)}}
+@keyframes no{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes pop{from{opacity:.4;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@media(max-width:900px){.pg{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){#pqo{padding:8px}.pqwrap{border-radius:22px;padding:14px 8px}.pqin{padding:22px 10px;border-radius:22px}.ops,.pg{grid-template-columns:1fr}.pg{max-width:360px}.op{min-height:auto}.act{flex-direction:column}.btn{width:100%}.timer{width:100%;font-size:30px;margin-bottom:10px;position:sticky;top:0;z-index:3}.seg{min-width:72px;font-size:17px}.pc{max-width:340px;width:100%;margin:0 auto}.pimg{aspect-ratio:4/5;height:auto}}
+`;
+
+var style=document.createElement("style");style.id="LimitlessQuizGameStyle";style.textContent=css;document.head.appendChild(style);
+
+var LOGO="https://files.easy-orders.net/1779651323776486437.png",WA="https://wa.me/201024348002",DELAY=50000,LIMIT=45,time=LIMIT,timer=null,lock=false,step=0,rev=0,code="",qs=[],parts=[],auto=0,productCache={};
+
+var C={
+"100EGP":{msg:"مبروك حصلت على قسيمة بقيمة 100 ج صالحة على المنتجات الآتية فقط",p:["creatine-citrulline-carb-offer","Evolve-Whey-Protein","CreaForce-Creapure-Creatine-Citrulline","ON-GOLD-STANDARED-WHEY","Totalwar-Preworkout","Pureganic-Preworkout","citrulline-malate-anabolic-creatine-pump","Nutriversum-Massgainer","Nutriversum-Amino-350-Tablet","Xtreme-Whey-Blend","Novogen-MassGainer","Badass-Concentrate","Zou-Whey-Concentrate2"]},
+"50EGP":{msg:"مبروك حصلت على قسيمة بقيمة 50 ج صالحة على المنتجات الآتية فقط",p:["CreaPower","citrulline-malate-anabolic-creatine-pump","Gold-Isolate","PureGanic-Creatine","CreaForce-Creapure-Creatine-Citrulline","Anabolic-Crazy-Pump-Preworkout","RuleOne-Creatine","Pureganic-Preworkout","Anabolic-Creatine-200Serv","Novogen-MassGainer","Dy-Creatine","whey-concentrate-anabolic-creatine"]},
+"RandomSale":{msg:"كسبت نسبة خصم عشوائية ممكن تبقى نسبة خصم عالية جدا أو نسبة قليلة أنت وحظك على أى منتج قيمته أعلى من 500 ج",p:[]}
 };
 
-const S={
-goal:{p:45,step:"السؤال 1 من 2",t:"ما هو هدفك؟",sub:"اختار الهدف الأقرب ليك، وبعدها هنرشحلك المنتجات المناسبة حسب احتياجك.",o:[["وزني خاسس ومحتاج جسمي يزيد","اختيارات للضخامة وزيادة الوزن","massBudget",0],["وزني مظبوط ومحتاج أزود الكتلة العضلية فقط","اختيارات لبناء عضل بدون زيادة وزن كبيرة","muscleBudget",0],["وزني زايد ومحتاج أخس","اختيارات للتخسيس ودعم التمرين","fatLoss",0],["محتاج أزود قوة التحمل والطاقة وضخ الدم للعضلات","اختيارات للطاقة والـ Pump قبل التمرين","pump_energy",1]]},
-massBudget:{p:72,step:"السؤال 2 من 2",t:"المبلغ اللي محدده للضخامة وزيادة الوزن",sub:"حدد الميزانية المناسبة ليك علشان نرشحلك أفضل اختيارات للضخامة.",o:[["في حدود 3000 ج","اختيارات أعلى للضخامة وزيادة الوزن","mass_3000",1],["في حدود 1000 ج","اختيارات متوسطة وعملية","mass_1000",1],["تحت 1000 ج","اختيارات اقتصادية للضخامة","mass_under_1000",1]]},
-muscleBudget:{p:72,step:"السؤال 2 من 2",t:"اختار الاختيار الأنسب لك",sub:"حدد مستوى الميزانية والمكملات اللي محتاجها لبناء كتلة عضلية.",o:[["ميزانيتي قليلة محتاج كرياتين فقط","اختيارات كرياتين أساسية ومباشرة","muscle_creatine",1],["ميزانيتي متوسطة محتاج كرياتين + سترولين","اختيارات للأداء والضخ العضلي","muscle_creatine_citrulline",1],["ميزانيتي عالية محتاج كرياتين + واي بروتين","اختيارات لبناء العضلات ودعم البروتين اليومي","muscle_whey_creatine",1]]},
-fatLoss:{p:72,step:"السؤال 2 من 2",t:"اختر المناسب لك",sub:"حدد حالتك الأقرب علشان تظهرلك الترشيحات المناسبة للتخسيس.",o:[["وزني زايد جدا ومحتاج حارق دهون بشكل مباشر","اختيارات مخصصة للتخسيس القوي مع ضرورة الالتزام بالنظام الغذائي","fat_strong",1],["وزني زايد بنسبة بسيطة","واي بروتين أيزوليت + كرياتين + تمرين","fat_light",1]]}
-};
-
-const R={
-mass_3000:["أفضل ترشيحات للضخامة ضمن ميزانية 3000 ج","الاختيارات دي مناسبة لو هدفك زيادة الوزن والضخامة بميزانية أعلى."],
-mass_1000:["أفضل ترشيحات للضخامة ضمن ميزانية 1000 ج","الاختيارات دي مناسبة لو محتاج حلول عملية للضخامة بسعر متوسط."],
-mass_under_1000:["أفضل ترشيحات للضخامة تحت 1000 ج","الاختيارات دي مناسبة لو محتاج بداية اقتصادية لزيادة الوزن."],
-muscle_creatine:["أفضل ترشيحات كرياتين فقط","الاختيارات دي مناسبة لو ميزانيتك قليلة وهدفك دعم القوة والأداء وبناء الكتلة العضلية."],
-muscle_creatine_citrulline:["أفضل ترشيحات كرياتين + سترولين","الاختيارات دي مناسبة لو عايز تجمع بين القوة والضخ العضلي والأداء الأفضل في التمرين."],
-muscle_whey_creatine:["أفضل ترشيحات كرياتين + واي بروتين","الاختيارات دي مناسبة لو ميزانيتك أعلى وعايز تدعم بناء العضلات بالبروتين والكرياتين."],
-fat_strong:["أفضل ترشيحات للتخسيس القوي","الاختيارات دي موجهة للتخسيس الأقوى، ويفضل استشارة مختص خصوصًا مع أي حالة صحية أو أدوية."],
-fat_light:["أفضل ترشيحات للتخسيس البسيط مع التمرين","الاختيارات دي مناسبة لو وزنك زايد بنسبة بسيطة وعايز بروتين أنضف مع دعم الأداء في التمرين."],
-pump_energy:["أفضل ترشيحات للطاقة والتحمل وضخ الدم","الاختيارات دي مناسبة قبل التمرين لدعم الطاقة والتحمل والإحساس بالـ Pump."]
-};
-
-let page="goal",hist=[],oldOverflow="",closed=false,opened=false,cache={};
-
-const $=id=>document.getElementById(id);
-const e=s=>String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-const url=s=>"/products/"+String(s||"").trim();
-
-function style(){
-  if($(C.style))$(C.style).remove();
-
-  let css=`@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700;800&display=swap');
-
-#${C.btn}{
-position:fixed!important;
-right:12px!important;
-top:50%!important;
-z-index:2147483000!important;
-width:76px!important;
-height:78px!important;
-border-radius:20px 0 0 20px!important;
-border:1px solid rgba(37,211,102,.62)!important;
-border-right:0!important;
-background:linear-gradient(135deg,#000,#111 56%,#052b14)!important;
-color:#fff!important;
-font-family:'Readex Pro',Arial,sans-serif!important;
-font-size:10.5px!important;
-font-weight:800!important;
-cursor:pointer!important;
-box-shadow:0 12px 30px rgba(0,0,0,.38)!important;
-display:flex!important;
-flex-direction:column!important;
-align-items:center!important;
-justify-content:center!important;
-gap:2px!important;
-direction:rtl!important;
-line-height:1.18!important;
-text-align:center!important;
-transform:translateY(-50%)!important;
-animation:lsfShake 4.5s ease-in-out infinite!important;
-}
-
-#${C.btn}:before{
-content:''!important;
-width:7px!important;
-height:7px!important;
-border-radius:50%!important;
-background:#25d366!important;
-display:block!important;
-margin-bottom:2px!important;
-}
-
-#${C.btn}:hover{
-animation-play-state:paused!important;
-transform:translateY(calc(-50% - 2px))!important;
-}
-
-#${C.overlay}{
-position:fixed!important;
-inset:0!important;
-z-index:2147483001!important;
-background:rgba(0,0,0,.78)!important;
-display:none!important;
-align-items:center!important;
-justify-content:center!important;
-padding:18px!important;
-box-sizing:border-box!important;
-}
-
-#${C.overlay}.active{
-display:flex!important;
-}
-
-#${C.box}{
-width:100%!important;
-max-width:1080px!important;
-max-height:92vh!important;
-overflow-y:auto!important;
-padding:28px 14px!important;
-color:#fff!important;
-font-family:'Readex Pro',Arial,sans-serif!important;
-direction:rtl!important;
-text-align:center!important;
-position:relative!important;
-border-radius:30px!important;
-box-shadow:0 28px 95px rgba(0,0,0,.72)!important;
-background:linear-gradient(135deg,#000,#101010 48%,#050505)!important;
-}
-
-#${C.box} *{
-box-sizing:border-box!important;
-font-family:'Readex Pro',Arial,sans-serif!important;
-}
-
-.lsf-close{
-position:absolute!important;
-top:14px!important;
-left:14px!important;
-width:40px!important;
-height:40px!important;
-border-radius:50%!important;
-border:1px solid rgba(255,255,255,.18)!important;
-background:rgba(255,255,255,.08)!important;
-color:#fff!important;
-font-size:25px!important;
-cursor:pointer!important;
-}
-
-.lsf-box{
-max-width:1010px!important;
-margin:0 auto!important;
-border:1px solid rgba(37,211,102,.22)!important;
-border-radius:26px!important;
-padding:32px 20px 26px!important;
-background:rgba(12,12,12,.78)!important;
-box-shadow:0 22px 70px rgba(0,0,0,.48)!important;
-}
-
-.lsf-title{
-font-size:clamp(25px,4vw,44px)!important;
-font-weight:800!important;
-margin:0 0 8px!important;
-line-height:1.25!important;
-color:#fff!important;
-}
-
-.lsf-title span{
-display:inline-block!important;
-padding:2px 10px!important;
-border-radius:999px!important;
-background:#25d366!important;
-color:#000!important;
-}
-
-.lsf-sub{
-margin:0 auto 22px!important;
-max-width:690px!important;
-color:#d6d6d6!important;
-font-size:14px!important;
-line-height:1.9!important;
-}
-
-.lsf-coupon{
-width:100%!important;
-max-width:760px!important;
-margin:0 auto 22px!important;
-padding:1px!important;
-border-radius:19px!important;
-background:linear-gradient(135deg,rgba(37,211,102,.95),rgba(183,245,200,.48),rgba(37,211,102,.9))!important;
-box-shadow:0 15px 35px rgba(0,0,0,.35)!important;
-}
-
-.lsf-coupon>div{
-min-height:54px!important;
-display:flex!important;
-align-items:center!important;
-justify-content:center!important;
-gap:10px!important;
-flex-wrap:wrap!important;
-padding:11px 14px!important;
-border-radius:18px!important;
-background:linear-gradient(135deg,#020202,#101010 54%,#052b14)!important;
-}
-
-.lsf-coupon small{
-padding:5px 11px!important;
-border-radius:999px!important;
-border:1px solid rgba(37,211,102,.55)!important;
-background:rgba(37,211,102,.12)!important;
-color:#b7f5c8!important;
-font-size:11px!important;
-font-weight:900!important;
-}
-
-.lsf-coupon span{
-color:#fff!important;
-font-size:13px!important;
-font-weight:900!important;
-}
-
-.lsf-coupon b{
-direction:ltr!important;
-padding:6px 14px!important;
-border-radius:999px!important;
-background:#25d366!important;
-color:#000!important;
-font-size:14px!important;
-}
-
-.lsf-progress{
-width:100%!important;
-max-width:590px!important;
-height:8px!important;
-border-radius:999px!important;
-background:rgba(255,255,255,.11)!important;
-margin:0 auto 24px!important;
-overflow:hidden!important;
-}
-
-.lsf-fill{
-height:100%!important;
-width:45%;
-background:linear-gradient(90deg,#b7f5c8,#25d366)!important;
-border-radius:999px!important;
-transition:.35s ease!important;
-}
-
-.lsf-step{
-display:inline-block!important;
-color:#25d366!important;
-font-size:12px!important;
-font-weight:700!important;
-margin-bottom:12px!important;
-}
-
-.lsf-q h3,.lsf-r h3{
-font-size:clamp(22px,3vw,32px)!important;
-margin:0 0 12px!important;
-color:#fff!important;
-line-height:1.45!important;
-font-weight:800!important;
-}
-
-.lsf-q p,.lsf-r p{
-max-width:720px!important;
-margin:0 auto 20px!important;
-color:#ddd!important;
-line-height:1.85!important;
-font-size:14px!important;
-}
-
-.lsf-options{
-display:grid!important;
-grid-template-columns:repeat(2,minmax(0,1fr))!important;
-gap:14px!important;
-max-width:840px!important;
-margin:0 auto!important;
-}
-
-.lsf-option{
-min-height:108px!important;
-border:1px solid rgba(255,255,255,.13)!important;
-background:linear-gradient(135deg,rgba(255,255,255,.105),rgba(37,211,102,.075))!important;
-color:#fff!important;
-border-radius:22px!important;
-padding:18px 22px 18px 16px!important;
-cursor:pointer!important;
-text-align:right!important;
-display:block!important;
-width:100%!important;
-position:relative!important;
-overflow:hidden!important;
-}
-
-.lsf-option:before{
-content:''!important;
-position:absolute!important;
-right:0!important;
-top:18px!important;
-width:4px!important;
-height:calc(100% - 36px)!important;
-background:#25d366!important;
-border-radius:999px 0 0 999px!important;
-}
-
-.lsf-option:hover{
-transform:translateY(-3px)!important;
-border-color:rgba(37,211,102,.62)!important;
-}
-
-.lsf-option strong{
-display:block!important;
-font-size:16px!important;
-margin-bottom:8px!important;
-color:#fff!important;
-line-height:1.65!important;
-}
-
-.lsf-option small{
-display:block!important;
-color:#d6d6d6!important;
-line-height:1.7!important;
-font-size:12px!important;
-}
-
-.lsf-actions{
-display:flex!important;
-align-items:center!important;
-justify-content:center!important;
-gap:10px!important;
-flex-wrap:wrap!important;
-margin-top:24px!important;
-}
-
-.lsf-back,.lsf-consult,.lsf-restart{
-display:inline-flex!important;
-align-items:center!important;
-justify-content:center!important;
-min-height:46px!important;
-padding:0 22px!important;
-border-radius:999px!important;
-font-size:13px!important;
-font-weight:800!important;
-cursor:pointer!important;
-text-decoration:none!important;
-}
-
-.lsf-back{
-border:1px solid rgba(255,255,255,.18)!important;
-background:rgba(255,255,255,.08)!important;
-color:#fff!important;
-}
-
-.lsf-back:disabled{
-opacity:.45!important;
-cursor:not-allowed!important;
-}
-
-.lsf-consult{
-border:1px solid rgba(37,211,102,.82)!important;
-background:#25d366!important;
-color:#000!important;
-}
-
-.lsf-restart{
-border:1px solid rgba(255,255,255,.22)!important;
-background:rgba(255,255,255,.1)!important;
-color:#fff!important;
-}
-
-.lsf-grid{
-display:grid!important;
-grid-template-columns:repeat(3,minmax(0,1fr))!important;
-gap:16px!important;
-max-width:960px!important;
-margin:24px auto 0!important;
-}
-
-.lsf-card{
-background:#fff!important;
-color:#000!important;
-border-radius:22px!important;
-padding:12px!important;
-text-align:right!important;
-box-shadow:0 18px 45px rgba(0,0,0,.35)!important;
-min-height:420px!important;
-display:flex!important;
-flex-direction:column!important;
-justify-content:space-between!important;
-}
-
-.lsf-imgbox{
-height:270px!important;
-border-radius:18px!important;
-background:#f4f4f5!important;
-overflow:hidden!important;
-display:flex!important;
-align-items:center!important;
-justify-content:center!important;
-margin-bottom:13px!important;
-}
-
-.lsf-img{
-width:100%!important;
-height:100%!important;
-object-fit:contain!important;
-padding:4px!important;
-}
-
-.lsf-ph{
-width:78px!important;
-height:78px!important;
-border-radius:18px!important;
-background:#eee!important;
-display:flex!important;
-align-items:center!important;
-justify-content:center!important;
-color:#777!important;
-font-size:11px!important;
-text-align:center!important;
-line-height:1.5!important;
-}
-
-.lsf-kicker{
-display:inline-flex!important;
-width:fit-content!important;
-padding:5px 10px!important;
-border-radius:999px!important;
-background:#b7f5c8!important;
-color:#1a1a1a!important;
-font-size:11px!important;
-font-weight:700!important;
-margin-bottom:9px!important;
-}
-
-.lsf-card h4{
-margin:0 0 8px!important;
-font-size:15px!important;
-color:#000!important;
-line-height:1.5!important;
-font-weight:800!important;
-direction:ltr!important;
-text-align:left!important;
-min-height:46px!important;
-}
-
-.lsf-price{
-direction:ltr!important;
-text-align:left!important;
-margin:0 0 12px!important;
-min-height:27px!important;
-color:#128c3f!important;
-font-size:18px!important;
-font-weight:900!important;
-}
-
-.lsf-loading{
-color:#777!important;
-font-size:12px!important;
-font-weight:600!important;
-}
-
-.lsf-card p{
-margin:0 0 14px!important;
-color:#555!important;
-font-size:12px!important;
-line-height:1.7!important;
-}
-
-.lsf-buy{
-display:inline-flex!important;
-align-items:center!important;
-justify-content:center!important;
-width:100%!important;
-min-height:43px!important;
-border-radius:999px!important;
-border:1px solid rgba(37,211,102,.72)!important;
-background:#000!important;
-color:#b7f5c8!important;
-text-decoration:none!important;
-font-weight:800!important;
-font-size:12px!important;
-}
-
-.lsf-note{
-background:#000!important;
-color:#b7f5c8!important;
-border-radius:14px!important;
-padding:10px!important;
-font-size:12px!important;
-line-height:1.7!important;
-margin-top:10px!important;
-}
-
-@keyframes lsfShake{
-0%,82%,100%{transform:translateY(-50%) translateX(0)}
-85%{transform:translateY(-50%) translateX(-4px)}
-88%{transform:translateY(-50%) translateX(4px)}
-91%{transform:translateY(-50%) translateX(-3px)}
-94%{transform:translateY(-50%) translateX(3px)}
-97%{transform:translateY(-50%) translateX(-1px)}
-}
-
-@media(max-width:900px){
-.lsf-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-}
-
-@media(max-width:760px){
-#${C.btn}{right:8px!important;width:70px!important;height:74px!important;font-size:10px!important}
-.lsf-box{padding:25px 12px 20px!important}
-.lsf-options,.lsf-grid{grid-template-columns:1fr!important}
-.lsf-actions{flex-direction:column!important}
-.lsf-back,.lsf-consult,.lsf-restart{width:100%!important}
-.lsf-imgbox{height:280px!important}
-}`;
-
-  let s=document.createElement("style");
-  s.id=C.style;
-  s.textContent=css;
-  document.head.appendChild(s);
-}
-
-function boot(){
-  [C.overlay,C.btn,C.style].forEach(id=>{
-    let x=$(id);
-    if(x)x.remove();
-  });
-
-  style();
-
-  let b=document.createElement("button");
-  b.id=C.btn;
-  b.type="button";
-  b.innerHTML="<span>اعرف</span><span>مكملك</span><span>المناسب</span>";
-  b.onclick=ev=>{
-    ev.preventDefault();
-    open();
-  };
-  document.body.appendChild(b);
-
-  let o=document.createElement("div");
-  o.id=C.overlay;
-  o.innerHTML=`<section id="${C.box}">
-    <button type="button" class="lsf-close">×</button>
-    <div class="lsf-box">
-      <h2 class="lsf-title">اكتشف المكمل <span>الأنسب لهدفك</span></h2>
-      <p class="lsf-sub">جاوب على سؤالين سريعين، وهيظهرلك ترشيح مناسب حسب هدفك وميزانيتك.</p>
-      <div class="lsf-coupon">
-        <div>
-          <small>عرض لأول طلب فقط</small>
-          <span>كوبون خصم لأول طلب للاستفادة بخصم أعلى</span>
-          <b>Limitless50</b>
-        </div>
-      </div>
-      <div class="lsf-progress">
-        <div class="lsf-fill" id="lsfFill"></div>
-      </div>
-      <div id="lsfContent"></div>
-    </div>
-  </section>`;
-
-  document.body.appendChild(o);
-
-  o.addEventListener("click",ev=>{
-    if(ev.target===o||ev.target.closest(".lsf-close"))close();
-  });
-
-  $("lsfContent").addEventListener("click",click);
-
-  document.addEventListener("keydown",ev=>{
-    if(ev.key==="Escape")close();
-  });
-
-  render("goal");
-
-  if(C.autoOpen){
-    setTimeout(()=>{
-      if(!closed&&!opened)open();
-    },C.autoOpen);
-  }
-}
-
-function open(){
-  let o=$(C.overlay);
-  if(!o)return;
-  opened=true;
-  oldOverflow=document.body.style.overflow||"";
-  o.classList.add("active");
-  document.body.style.overflow="hidden";
-}
-
-function close(){
-  let o=$(C.overlay);
-  if(!o)return;
-  closed=true;
-  o.classList.remove("active");
-  document.body.style.overflow=oldOverflow;
-}
-
-function click(ev){
-  let op=ev.target.closest(".lsf-option");
-  let back=ev.target.closest("[data-back]");
-  let restart=ev.target.closest("[data-restart]");
-
-  if(op){
-    let next=op.dataset.next;
-    let res=op.dataset.result;
-
-    if(next){
-      hist.push(page);
-      page=next;
-      render(next);
-    }else if(res){
-      hist.push(page);
-      page="result:"+res;
-      result(res);
-    }
-  }else if(back){
-    if(!hist.length)return;
-    let p=hist.pop();
-    page=p;
-    p.indexOf("result:")===0?result(p.replace("result:","")):render(p);
-  }else if(restart){
-    hist=[];
-    page="goal";
-    render("goal");
-  }
-}
-
-function fill(n){
-  let f=$("lsfFill");
-  if(f)f.style.width=n+"%";
-}
-
-function render(name){
-  let s=S[name];
-  let c=$("lsfContent");
-  if(!s||!c)return;
-
-  fill(s.p);
-
-  c.innerHTML=`<div class="lsf-q">
-    <span class="lsf-step">${e(s.step)}</span>
-    <h3>${e(s.t)}</h3>
-    <p>${e(s.sub)}</p>
-    <div class="lsf-options">
-      ${s.o.map(x=>`<button type="button" class="lsf-option" ${x[3]?`data-result="${e(x[2])}"`:`data-next="${e(x[2])}"`}>
-        <strong>${e(x[0])}</strong>
-        <small>${e(x[1])}</small>
-      </button>`).join("")}
-    </div>
-    <div class="lsf-actions">
-      <button type="button" class="lsf-back" data-back ${hist.length?"":"disabled"}>رجوع</button>
-      <a class="lsf-consult" href="${C.wa}" target="_blank" rel="noopener">استشارة مع د/مازن</a>
-    </div>
-  </div>`;
-}
-
-function result(k){
-  let r=R[k];
-  let c=$("lsfContent");
-  let items=P[k]||[];
-
-  if(!r||!c)return;
-
-  fill(100);
-
-  c.innerHTML=`<div class="lsf-r">
-    <span class="lsf-step">النتيجة</span>
-    <h3>${e(r[0])}</h3>
-    <p>${e(r[1])}</p>
-    <div class="lsf-grid">${items.map(card).join("")}</div>
-    <div class="lsf-actions">
-      <button type="button" class="lsf-back" data-back>رجوع</button>
-      <button type="button" class="lsf-restart" data-restart>ابدأ من جديد</button>
-      <a class="lsf-consult" href="${C.wa}" target="_blank" rel="noopener">استشارة مع د/مازن</a>
-    </div>
-  </div>`;
-
-  items.forEach(x=>load(x));
-}
-
-function card(x){
-  return `<div class="lsf-card" data-slug="${e(x[0])}">
-    <div>
-      <div class="lsf-imgbox" data-img>
-        <div class="lsf-ph">جاري تحميل الصورة</div>
-      </div>
-      <span class="lsf-kicker">منتج مرشح</span>
-      <h4 data-title>${e(x[1])}</h4>
-      <div class="lsf-price" data-price>
-        <span class="lsf-loading">جاري تحميل السعر...</span>
-      </div>
-      <p>مناسب بناءً على إجاباتك داخل الـ Supplement Finder.</p>
-      ${x[2]?`<div class="lsf-note">${e(x[2])}</div>`:""}
-    </div>
-    <a class="lsf-buy" href="${url(x[0])}">افتح المنتج</a>
-  </div>`;
-}
-
-async function load(x){
-  let slug=x[0];
-  let fb={title:x[1],image:"",price:""};
-  let d=cache[slug];
-
-  if(!d){
-    try{
-      let r=await fetch(url(slug),{credentials:"same-origin"});
-      if(r.ok){
-        let doc=new DOMParser().parseFromString(await r.text(),"text/html");
-        d=parse(doc,fb);
-      }else{
-        d=fb;
+function R(f){document.readyState!="loading"?f():document.addEventListener("DOMContentLoaded",f)}
+function G(i){return document.getElementById(i)}
+function Sh(a){return a.sort(function(){return Math.random()-.5})}
+function logo(){return'<img class="lg" src="'+LOGO+'" alt="Limitless">'}
+function shell(h,close){return'<div class="pqwrap">'+(close?'<button class="x" id="pqclose">×</button>':"")+'<div class="pqin">'+logo()+h+'</div></div>'}
+function openBox(h){var old=G("pqo");if(old)old.remove();var d=document.createElement("div");d.id="pqo";d.innerHTML=shell(h,1);document.body.appendChild(d);G("pqclose").onclick=function(){clearInterval(timer);d.remove()}}
+function getQuestionSource(){return window.QUIZ_QUESTIONS||window.LIMITLESS_QUIZ_QUESTIONS||[]}
+function normalizeQuestion(item){if(!item)return null;var q=item.q||item.question||item.text||item.title||"",opts=item.o||item.options||item.answers||[],a=typeof item.a==="number"?item.a:typeof item.answer==="number"?item.answer:typeof item.correct==="number"?item.correct:0;if(!q||!opts||opts.length<2)return null;return{q:String(q),o:opts.slice(0,4).map(function(x){return String(x)}),a:a}}
+function prep(){var source=getQuestionSource().map(normalizeQuestion).filter(Boolean);if(source.length<3)return false;var ks=Object.keys(C);code=ks[Math.floor(Math.random()*ks.length)];parts=code=="RandomSale"?["Random","Sale","🎁"]:code=="100EGP"?["100","EG","P"]:["50","EG","P"];qs=Sh(source.slice()).slice(0,3);step=0;rev=0;return true}
+function cpn(){var h='<div class="cpn"><small>YOUR REWARD COUPON</small>';for(var i=0;i<3;i++)h+='<span class="seg '+(i<rev?"on":"")+'">'+(i<rev?parts[i]:"-----")+'</span>';return h+'</div>'}
+function introText(){return'<h2 class="ttl">اختبر معرفتك بعلم التغذية في تحدي من <span>3 أسئلة</span> جاوب عليهم صح، واستلم هديتك</h2><p class="ds">مش بنقدملك <b>هدية وبس</b>؛ بنقدملك <b>معلومة</b> تساعدك تفهم جسمك، تحدد احتياجك، وتختار المكمل المناسب بثقة.</p><p class="ds">هدفنا <b>ليس البيع فقط</b>؛ رسالتنا <b>نشر الوعي والمعلومة</b> مما سيؤدي بالضرورة إلى <b>صحة أفضل</b>.</p>'}
+function inlineCard(){var r=G("pqx");if(!r)return;r.innerHTML=shell(introText()+'<div class="sc">جاوب على 3 أسئلة صحيحة واحصل على قسيمة عشوائية</div><div class="bar"><i style="width:0%"></i></div><div class="cpn"><small>YOUR REWARD COUPON</small><span class="seg">-----</span><span class="seg">-----</span><span class="seg">-----</span></div><div class="act"><button class="btn p" id="inlineStart">ابدأ التحدي</button></div>',0);G("inlineStart").onclick=function(){auto=1;intro()}}
+function noQuestions(){openBox('<div class="ic e">!</div><h2 class="ttl">الأسئلة لم تتحمل بعد</h2><p class="ds">تأكد أن ملف questions.js متضاف قبل ملف quiz-game.js وفيه window.QUIZ_QUESTIONS.</p><div class="act"><button class="btn p" id="tryq">حاول مرة أخرى</button></div>');G("tryq").onclick=intro}
+function intro(){if(!prep()){noQuestions();return}openBox(introText()+'<div class="sc">إجمالي الوقت 45 ثانية فقط للإجابة على 3 أسئلة</div><div class="bar"><i style="width:0%"></i></div>'+cpn()+'<div class="act"><button class="btn p" id="begin">ابدأ التحدي</button></div>');G("begin").onclick=start}
+function start(){time=LIMIT;step=0;rev=0;clearInterval(timer);ask();timer=setInterval(function(){time--;paintTime();if(time<=0)wrong("الوقت خلص! يمكنك إعادة التحدي مرة أخرى وربح قسيمة شراء مجانية.")},1000)}
+function paintTime(){var e=G("tm");if(e){e.innerHTML="⏱ "+time+"s";if(time<=10)e.classList.add("red")}}
+function ask(){lock=false;var q=qs[step],arr=q.o.map(function(x,i){return{text:x,ok:i==q.a}});arr=Sh(arr);q.cur=arr;var L=["A","B","C","D"],h="";for(var i=0;i<arr.length;i++)h+='<button class="op" data-i="'+i+'"><span class="lt">'+L[i]+'</span><strong>'+arr[i].text+'</strong></button>';openBox('<div class="meta"><div class="pill">السؤال '+(step+1)+' من 3</div></div><div class="timer" id="tm">⏱ '+time+'s</div><div class="bar"><i style="width:'+((step/3)*100+15)+'%"></i></div><h3 class="q">'+q.q+'</h3><div class="ops">'+h+'</div>'+cpn());paintTime();document.querySelectorAll("#pqo .op").forEach(function(b){b.onclick=function(){ans(+this.getAttribute("data-i"),this)}})}
+function ans(i,b){if(lock)return;lock=true;document.querySelectorAll("#pqo .op").forEach(function(x){x.classList.add("off")});if(qs[step].cur[i].ok){b.classList.add("ok");rev++;setTimeout(function(){step++;step>=3?win():ask()},500)}else{b.classList.add("no");setTimeout(function(){wrong("للأسف إجابتك خاطئة يمكنك إعادة التحدي مرة أخرى وربح قسيمة شراء مجانية ولا تتردد نهائيًا في استشارة د/مازن في أي سؤال تتعثر في إجابته أو طلب النصيحة في اختيار المكمل المناسب.")},550)}}
+function wrong(msg){clearInterval(timer);openBox('<div class="ic e">×</div><h2 class="ttl">للأسف إجابتك خاطئة</h2><p class="ds">'+msg+'</p><div class="act"><button class="btn p" id="retry">إعادة التحدي</button><a class="btn wa" href="'+WA+'" target="_blank">التواصل مع د/مازن</a></div>');G("retry").onclick=intro}
+function win(){clearInterval(timer);var o=C[code];openBox('<div class="ic">✓</div><h2 class="ttl">تم فتح <span>قسيمة الخصم</span></h2><p class="ds">'+o.msg+'</p><div class="code">'+code+'</div><div class="cd">هذه القسيمة صالحة لمدة 24 ساعة: <span id="cdt">24:00:00</span></div><div class="act"><button class="btn p" id="copyc">نسخ القسيمة</button><button class="btn" id="shopc">ابدأ التسوق الآن</button></div><div class="pg" id="plist"></div>');G("copyc").onclick=function(){navigator.clipboard&&navigator.clipboard.writeText(code);this.innerHTML="تم النسخ"};G("shopc").onclick=function(){location.href=o.p[0]?productUrl(o.p[0]):"/collections/all"};count(86400);cards(code)}
+function count(sec){clearInterval(window.pqcd);window.pqcd=setInterval(function(){sec--;var h=String(Math.floor(sec/3600)).padStart(2,"0"),m=String(Math.floor(sec%3600/60)).padStart(2,"0"),s=String(sec%60).padStart(2,"0"),e=G("cdt");if(e)e.innerHTML=h+":"+m+":"+s;if(sec<=0)clearInterval(window.pqcd)},1000)}
+function productUrl(slug){return"/products/"+String(slug||"").trim()}
+function pretty(s){return String(s||"").replace(/-/g," ")}
+function cards(c){var o=C[c],box=G("plist");if(!box)return;if(!o.p.length){box.innerHTML='<a class="pc" href="/collections/all"><div><div class="pimg"><div class="ph">Random Sale</div></div><span class="kick">قسيمة عشوائية</span><h4>خصم عشوائي على أي منتج قيمته أعلى من 500 ج</h4><div class="price"><span class="cur">افتح المتجر واختار المنتج المناسب</span></div><p>القسيمة صالحة حسب شروط العرض.</p></div><span class="buy">افتح المتجر</span></a>';return}box.innerHTML=o.p.map(function(s){return'<div class="pc" data-p-slug="'+esc(s)+'"><div><div class="pimg" data-img><div class="ph">جاري تحميل الصورة</div></div><span class="kick">منتج متاح عليه الخصم</span><h4 data-title>'+esc(pretty(s))+'</h4><div class="price" data-price><span class="load">جاري تحميل السعر...</span></div><p>هذا المنتج ضمن المنتجات المتاح استخدام القسيمة عليها.</p></div><a class="buy" href="'+productUrl(s)+'">افتح المنتج</a></div>'}).join("");o.p.forEach(function(s){loadProductData({slug:s,title:pretty(s)}).then(function(data){updateCard(s,data)})})}
+async function loadProductData(product){var slug=String(product.slug||"").trim();if(productCache[slug])return productCache[slug];var fallback={title:product.title||slug,image:"",price:""};try{var response=await fetch(productUrl(slug),{method:"GET",credentials:"same-origin"});if(!response.ok){productCache[slug]=fallback;return fallback}var html=await response.text();var doc=new DOMParser().parseFromString(html,"text/html");var data=extractProductData(doc,fallback);productCache[slug]=data;return data}catch(e){productCache[slug]=fallback;return fallback}}
+function extractProductData(doc,fallbackData){var title=getMetaContent(doc,'meta[property="og:title"]')||getMetaContent(doc,'meta[name="twitter:title"]')||getText(doc,"h1")||fallbackData.title;var image=getMetaContent(doc,'meta[property="og:image"]')||getMetaContent(doc,'meta[name="twitter:image"]')||getImageFromPage(doc);var price=getFinalPriceFromPage(doc);return{title:cleanTitle(title),image:image||"",price:price||""}}
+function getFinalPriceFromPage(doc){var metaPrice=getMetaContent(doc,'meta[property="product:price:amount"]')||getMetaContent(doc,'meta[property="og:price:amount"]')||getMetaContent(doc,'meta[itemprop="price"]');if(metaPrice)return formatPrice(metaPrice);var jsonPrice=getPriceFromJsonLd(doc);if(jsonPrice)return formatPrice(jsonPrice);var preferred=["[class*='sale'][class*='price']","[class*='current'][class*='price']","[class*='final'][class*='price']","[class*='discount'][class*='price']","[data-price]",".sale-price",".current-price",".product-price"];for(var i=0;i<preferred.length;i++){var elements=doc.querySelectorAll(preferred[i]);for(var j=0;j<elements.length;j++){var value=extractFirstPrice(elements[j].textContent);if(value)return formatPrice(value)}}var bodyText=doc.body?doc.body.innerText:"";var allPrices=bodyText.match(/(?:EGP|ج\.م|جنيه|LE|L\.E|E£)?\s*[0-9][0-9,.\s]{1,12}\s*(?:EGP|ج\.م|جنيه|LE|L\.E|E£)?/gi)||[];for(var k=0;k<allPrices.length;k++){var cleaned=cleanPriceCandidate(allPrices[k]);if(cleaned&&!/%/.test(cleaned)&&!/save/i.test(cleaned))return formatPrice(cleaned)}return""}
+function getPriceFromJsonLd(doc){var scripts=doc.querySelectorAll('script[type="application/ld+json"]');for(var i=0;i<scripts.length;i++){try{var data=JSON.parse(scripts[i].textContent);var found=findJsonLdPrice(data);if(found)return found}catch(e){}}return""}
+function findJsonLdPrice(data){if(!data)return"";if(Array.isArray(data)){for(var i=0;i<data.length;i++){var found=findJsonLdPrice(data[i]);if(found)return found}}if(typeof data==="object"){if(data.offers){var offerPrice=findJsonLdPrice(data.offers);if(offerPrice)return offerPrice}if(data.price)return data.price;if(data.lowPrice)return data.lowPrice;if(data.highPrice)return data.highPrice}return""}
+function extractFirstPrice(text){var normalized=normalizeSpace(text);if(!normalized)return"";var withoutSave=normalized.replace(/save\s*-?\s*[0-9]+%/gi,"").replace(/-[0-9]+%/g,"").replace(/خصم|وفر|توفير/gi,"");var matches=withoutSave.match(/(?:EGP|ج\.م|جنيه|LE|L\.E|E£)?\s*[0-9][0-9,.\s]{1,12}\s*(?:EGP|ج\.م|جنيه|LE|L\.E|E£)?/gi);if(!matches||!matches.length)return"";return cleanPriceCandidate(matches[0])}
+function cleanPriceCandidate(value){var text=normalizeSpace(value);text=text.replace(/save/gi,"").replace(/-[0-9]+%/g,"").replace(/[^\d.,\sA-Za-z£جنيهج.م]/g,"");text=normalizeSpace(text);var numberMatch=text.match(/[0-9][0-9,.\s]*/);if(!numberMatch)return"";var number=normalizeSpace(numberMatch[0]).replace(/\s/g,"");return number||""}
+function formatPrice(value){var number=cleanPriceCandidate(value);if(!number)return"";return number+" EGP"}
+function updateCard(slug,data){var card=document.querySelector('[data-p-slug="'+cssEsc(slug)+'"]');if(!card)return;var imageBox=card.querySelector("[data-img]"),title=card.querySelector("[data-title]"),price=card.querySelector("[data-price]");if(title&&data.title)title.textContent=data.title;if(imageBox){if(data.image){imageBox.innerHTML='<img src="'+esc(data.image)+'" alt="'+esc(data.title||"")+'" loading="lazy">'}else{imageBox.innerHTML='<div class="ph">لا توجد صورة</div>'}}if(price){if(data.price){price.innerHTML='<span class="cur">السعر: '+esc(data.price)+'</span>'}else{price.innerHTML='<span class="load">السعر يظهر داخل صفحة المنتج</span>'}}}
+function getMetaContent(doc,selector){var el=doc.querySelector(selector);return el?el.getAttribute("content")||"":""}
+function getText(doc,selector){var el=doc.querySelector(selector);return el?el.textContent.trim():""}
+function getImageFromPage(doc){var selectors=[".product img",".product-page img",".product__media img",".product-gallery img",".swiper-slide img","img[src*='digitaloceanspaces']","img"];for(var i=0;i<selectors.length;i++){var img=doc.querySelector(selectors[i]);if(img){var src=img.getAttribute("src")||img.getAttribute("data-src")||img.getAttribute("data-lazy-src")||"";if(src)return abs(src)}}return""}
+function abs(url){if(!url)return"";if(url.indexOf("//")===0)return location.protocol+url;if(url.indexOf("http://")===0||url.indexOf("https://")===0)return url;if(url.indexOf("/")===0)return location.origin+url;return location.origin+"/"+url}
+function cleanTitle(title){return normalizeSpace(String(title||"").replace(/\s*\|\s*.*$/g,""))}
+function normalizeSpace(value){return String(value||"").replace(/\s+/g," ").trim()}
+function cssEsc(value){if(window.CSS&&typeof window.CSS.escape==="function")return window.CSS.escape(String(value));return String(value).replace(/"/g,'\\"')}
+function esc(value){return String(value||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function mount(){
+  if(!/\/products\//.test(location.pathname))return;
+
+  var root=G("pqx")||document.createElement("div");
+  root.id="pqx";
+
+  var tries=0;
+
+  var place=function(){
+    tries++;
+
+    var target=document.querySelector(".p_details_container .bg-white.rounded-lg.border.border-gray-300.mt-8.max-w-full")
+      || document.querySelector(".p_details_container .bg-white.rounded-lg.border.border-gray-300")
+      || document.querySelector(".p_details_container [class*='border-gray-300'][class*='mt-8']");
+
+    if(target&&target.parentNode){
+      if(!root.parentNode){
+        target.insertAdjacentElement("afterend",root);
       }
-    }catch(_){
-      d=fb;
+      inlineCard();
+      return true;
     }
 
-    cache[slug]=d;
-  }
+    var desc=document.querySelector('[class*="product-description"],[id*="product-description"],[class*="description"],[id*="description"]');
 
-  let safeSlug=CSS&&CSS.escape?CSS.escape(slug):slug.replace(/"/g,'\\"');
-  let card=document.querySelector(`[data-slug="${safeSlug}"]`);
-  if(!card)return;
+    if(tries>40&&desc&&desc.parentNode){
+      if(!root.parentNode){
+        desc.parentNode.insertBefore(root,desc);
+      }
+      inlineCard();
+      return true;
+    }
 
-  let im=card.querySelector("[data-img]");
-  let t=card.querySelector("[data-title]");
-  let p=card.querySelector("[data-price]");
+    if(tries>60){
+      if(!root.parentNode){
+        (document.querySelector("main")||document.body).appendChild(root);
+      }
+      inlineCard();
+      return true;
+    }
 
-  if(t&&d.title)t.textContent=d.title;
-
-  if(im){
-    im.innerHTML=d.image?`<img class="lsf-img" src="${e(d.image)}" alt="${e(d.title||"")}" loading="lazy">`:`<div class="lsf-ph">لا توجد صورة</div>`;
-  }
-
-  if(p){
-    p.innerHTML=d.price?e(d.price):`<span class="lsf-loading">السعر يظهر داخل صفحة المنتج</span>`;
-  }
-}
-
-function m(doc,s){
-  let x=doc.querySelector(s);
-  return x?x.getAttribute("content")||"":"";
-}
-
-function parse(doc,fb){
-  let title=(m(doc,'meta[property="og:title"]')||m(doc,'meta[name="twitter:title"]')||(doc.querySelector("h1")||{}).textContent||fb.title).replace(/\s*\|\s*.*$/,"").trim();
-
-  return {
-    title,
-    image:m(doc,'meta[property="og:image"]')||m(doc,'meta[name="twitter:image"]')||img(doc),
-    price:price(doc)
+    return false;
   };
-}
 
-function img(doc){
-  let im=doc.querySelector('.product img,.product-page img,.product__media img,.product-gallery img,.swiper-slide img,img[src*="digitaloceanspaces"],img');
-
-  if(!im)return "";
-
-  let s=im.getAttribute("src")||im.getAttribute("data-src")||im.getAttribute("data-lazy-src")||"";
-
-  if(!s)return "";
-  if(s.indexOf("//")===0)return location.protocol+s;
-  if(/^https?:\/\//.test(s))return s;
-  if(s[0]==="/")return location.origin+s;
-
-  return location.origin+"/"+s;
-}
-
-function price(doc){
-  let v=m(doc,'meta[property="product:price:amount"]')||m(doc,'meta[property="og:price:amount"]')||m(doc,'meta[itemprop="price"]');
-
-  if(!v){
-    let txt=doc.body?doc.body.innerText:"";
-    let a=txt.match(/(?:EGP|ج\.م|جنيه|LE|L\.E|E£)?\s*[0-9][0-9,.\s]{1,12}\s*(?:EGP|ج\.م|جنيه|LE|L\.E|E£)?/i);
-    v=a?a[0]:"";
+  if(!place()){
+    var iv=setInterval(function(){
+      if(place())clearInterval(iv);
+    },250);
   }
 
-  let n=String(v||"").replace(/[^\d.,\s]/g,"").trim().replace(/\s/g,"");
-
-  return n?n+" EGP":"";
+  setTimeout(function(){
+    if(!auto&&!G("pqo")){
+      auto=1;
+      intro();
+    }
+  },DELAY);
 }
-
-(document.readyState==="loading"?document.addEventListener("DOMContentLoaded",boot):boot());
+R(mount);
 })();
