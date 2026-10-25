@@ -10,7 +10,7 @@
 
   const CONFIG = {
     logo: 'https://files.easy-orders.net/1789695346542392649.png',
-    doctor: 'https://easyorders.fra1.digitaloceanspaces.com/1781078308680066101.png',
+    doctor: 'https://files.easy-orders.net/1792947269903101912.png',
     whatsapp: 'https://api.whatsapp.com/send/?phone=201024348002&text=اترك+استفسارك+ل+د%2Fمازن+من+الساعة+3+عصرا+الى+9+مساءا+وبالرجاء+كتابة+التفاصيل+من+حيث+الوزن+-+الطول+-+العمر',
     offers: 'https://medcare-supplement.com/collections/Offers',
     autoOpenDelay: 7000, // 7 seconds after load
